@@ -5,13 +5,13 @@
 ; single_eor Copyright (C) ? by White Flame
 ; four_taps_eor Copyright (C) 2002 by Lee E. Davison
 ;
-;               quality speed   code+data size
-; single_eor    0       5*****  11
-; four_taps_eor 0       5*****  26
-; sfc16         2**     4****   246
-; chacha20(8)   3***    4****   3568
-; chacha20(12)  4****   3***    3568
-; chacha20(20)  5*****  2**     3568
+;               quality speed   code+data       data only
+; single_eor    0       5*****  11              1
+; four_taps_eor 0       5*****  26              1
+; sfc16         2**     4****   246             15
+; chacha20(8)   3***    4****   3568            128
+; chacha20(12)  4****   3***    3568            128
+; chacha20(20)  5*****  2**     3568            128
 ;
 ; fill 4kB byte per byte, DMA off, VBI on for counter
 ;
@@ -227,12 +227,15 @@ buffered
 
 RANDOM_START_CHACHA20 = *
 
-.macro add64 srcloc addloc dstloc
+.macro inc64 loc
     clc
-    .rept 8, #-1
-    lda :srcloc+#
-    adc :addloc+#
-    sta :dstloc+#
+    lda :loc
+    adc #1
+    sta :loc
+    .rept 7, #
+    lda :loc+#
+    adc #0
+    sta :loc+#
     .endr
 .endm
 
@@ -335,7 +338,7 @@ loop
 
 ; increase counter for next block
 
-    add64 counter0 one counter0
+    inc64 counter0
     rts
 
 rounds_counter
@@ -443,9 +446,6 @@ nonce0
 state15
 nonce1
     .dword 0x7410533d
-
-one
-    .dword 1,0
 
 .print 'chacha20: ', RANDOM_START_CHACHA20, '-', *-1, ' (', *-RANDOM_START_CHACHA20, ')'
 

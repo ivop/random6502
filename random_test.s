@@ -25,7 +25,7 @@ ptr = $f0
     mva #0 $022f
     mva #0 $d400
 
-ROUNDS=8
+ROUNDS=20
     mva #ROUNDS/2 random_chacha20_core.rounds
 
 @
