@@ -7,12 +7,7 @@
 ; screen off
 ; vbi on (for counter)
 ;
-; single_eor          7 frames (0.14s)
-; four_taps_eor      11 frames (0.22s)
-; sfc16              48 frames (0.96s)
-; chacha20(8)       142 frames (2.84s)
-; chacha20(12)      209 frames (4.18s)
-; chacha20(20)      342 frames (6.84s)
+; results at the top of random.s
 
     org $1000
 
@@ -30,8 +25,8 @@ ptr = $f0
     mva #0 $022f
     mva #0 $d400
 
-;ROUNDS=8
-;    mva #ROUNDS/2 random_chacha20_core.rounds
+ROUNDS=8
+    mva #ROUNDS/2 random_chacha20_core.rounds
 
 @
     lda $d40b
@@ -42,8 +37,8 @@ ptr = $f0
 fill
 ;    jsr random_single_eor
 ;    jsr random_four_taps_eor
-    jsr random_sfc16
-;    jsr random_chacha20
+;    jsr random_sfc16
+    jsr random_chacha20
 
     ldy #0
     sta (ptr),y

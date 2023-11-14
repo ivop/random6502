@@ -8,22 +8,19 @@
 ;               quality speed   code+data size
 ; single_eor    0       5*****  11
 ; four_taps_eor 0       5*****  26
-; sfc16         2**     4****   230
-; chacha20(8)   3***    3***    3386
-; chacha20(12)  4****   2**     3386
-; chacha20(20)  5*****  1*      3386
+; sfc16         2**     4****   246
+; chacha20(8)   3***    4****   3568
+; chacha20(12)  4****   3***    3568
+; chacha20(20)  5*****  2**     3568
 ;
 ; fill 4kB byte per byte, DMA off, VBI on for counter
 ;
 ; single_eor          7 frames (0.14s)
 ; four_taps_eor      11 frames (0.22s)
 ; sfc16              48 frames (0.96)
-; chacha20(8)       142 frames (2.84s)
-; chacha20(12)      209 frames (4.18s)
-; chacha20          342 frames (6.84s)
-
-
-RANDOM_START = *
+; chacha20(8)        68 frames (1.36s)
+; chacha20(12)       98 frames (2.96s)
+; chacha20          157 frames (3.14s)
 
 ; -----------------------------------------------------------------------------
 
@@ -31,6 +28,8 @@ RANDOM_START = *
 ; NOTE: noticed a run like 1 2 4 8 $10 $20, not good
 
 .ifdef RANDOM_ENABLE_SINGLE_EOR
+
+RANDOM_START_SINGLE_EOR = *
 
 .proc random_single_eor
     lda seed
@@ -48,6 +47,8 @@ seed
     dta $ff
 .endp
 
+.print 'single_eor: ', RANDOM_START_SINGLE_EOR, '-', *-1, ' (', *-RANDOM_START_SINGLE_EOR, ')'
+
 .endif
 
 ; -----------------------------------------------------------------------------
@@ -57,6 +58,8 @@ seed
 ; NOTE: also has shifted runs
 
 .ifdef RANDOM_ENABLE_FOUR_TAPS_EOR
+
+RANDOM_START_FOUR_TAPS_EOR = *
 
 .proc random_four_taps_eor
     lda seed
@@ -79,6 +82,8 @@ seed
 seed
     dta $ff
 .endp
+
+.print 'four_taps_eor: ', RANDOM_START_FOUR_TAPS_EOR, '-', *-1, ' (', *-RANDOM_START_FOUR_TAPS_EOR, ')'
 
 .endif
 
@@ -105,6 +110,8 @@ seed
 ; without rept/endr it is slightly faster
 
 .ifdef RANDOM_ENABLE_SFC16
+
+RANDOM_START_SFC16 = *
 
 BARREL_SHIFT=6
 RSHIFT=5
@@ -206,6 +213,8 @@ buffered
     dta 0
 .endp
 
+.print 'sfc16: ', RANDOM_START_SFC16, '-', *-1, ' (', *-RANDOM_START_SFC16, ')'
+
 .endif
 
 ; -----------------------------------------------------------------------------
@@ -215,6 +224,8 @@ buffered
 ; inspired by PractRand and OpenSSL
 
 .ifdef RANDOM_ENABLE_CHACHA20
+
+RANDOM_START_CHACHA20 = *
 
 .macro add64 srcloc addloc dstloc
     clc
@@ -256,10 +267,40 @@ buffered
     bne @-
 .endm
 
+.macro rol32_16 loc
+    lda :loc
+    ldx :loc+1
+
+    mvy :loc+2 :loc
+    mvy :loc+3 :loc+1
+
+    sta :loc+2
+    stx :loc+3
+.endm
+
+.macro rol32_8 loc
+    ldx :loc+3
+
+    mva :loc+2 :loc+3
+    mva :loc+1 :loc+2
+    mva :loc+0 :loc+1
+
+    stx :loc+0
+.endm
+
 .macro STEP one two three times
     add32 :one :two :one
     xor32 :three :one :three
+.if :times=16
+    rol32_16 :three
+.elseif :times=8
+    rol32_8 :three
+.elseif :times=12
+    rol32_8 :three
+    rol32 :three 4
+.else
     rol32 :three :times
+.endif
 .endm
 
 .macro QUARTERROUND AAA BBB CCC DDD
@@ -276,9 +317,8 @@ buffered
     dey
     bpl @-
 
-; xxx: for (int i=0; i<10; i++) { eight quarterrounds }
-
-    ldy rounds: #10
+    lda rounds: #10
+    sta rounds_counter
 
 loop
     QUARTERROUND 0, 4, 8, 12
@@ -290,13 +330,16 @@ loop
     QUARTERROUND 2, 7, 8, 13
     QUARTERROUND 3, 4, 9, 14
 
-    dey
+    dec rounds_counter
     jne loop
 
 ; increase counter for next block
 
     add64 counter0 one counter0
     rts
+
+rounds_counter
+    dta 0
 .endp
 
 .proc random_chacha20
@@ -404,10 +447,11 @@ nonce1
 one
     .dword 1,0
 
+.print 'chacha20: ', RANDOM_START_CHACHA20, '-', *-1, ' (', *-RANDOM_START_CHACHA20, ')'
+
 .endif
 
 ; -----------------------------------------------------------------------------
 
 ; -----------------------------------------------------------------------------
 
-.print 'random: ', RANDOM_START, '-', *-1, ' (', *-RANDOM_START, ')'
