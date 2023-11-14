@@ -187,6 +187,201 @@ tmp
 
 ; -----------------------------------------------------------------------------
 
+; Chacha20
+; based on PractRand and OpenSSL
+
+.ifdef RANDOM_ENABLE_CHACHA20
+
+.macro add64 srcloc addloc dstloc
+    clc
+    .rept 8, #-1
+    lda :srcloc+#
+    adc :addloc+#
+    sta :dstloc+#
+    .endr
+.endm
+
+.macro add32 srcloc addloc dstloc
+    clc
+    .rept 4, #-1
+    lda :srcloc+#
+    adc :addloc+#
+    sta :dstloc+#
+    .endr
+.endm
+
+.macro xor32 srcloc xorloc dstloc
+    .rept 4, #-1
+    lda :srcloc+#
+    eor :xorloc+#
+    sta :dstloc+#
+    .endr
+.endm
+
+.macro rol32 rolloc times
+    ldx #:times
+@
+    asl :rolloc
+    rol :rolloc+1
+    rol :rolloc+2
+    rol :rolloc+3
+    lda :rolloc
+    adc #0
+    sta :rolloc
+    dex
+    bne @-
+.endm
+
+.macro STEP one two three times
+    add32 :one :two :one
+    xor32 :three :one :three
+    rol32 :three :times
+.endm
+
+.macro QUARTERROUND AAA BBB CCC DDD
+    STEP outbuf:AAA outbuf:BBB outbuf:DDD 16
+    STEP outbuf:CCC outbuf:DDD outbuf:BBB 12
+    STEP outbuf:AAA outbuf:BBB outbuf:DDD 8
+    STEP outbuf:CCC outbuf:DDD outbuf:BBB 7
+.endm
+
+.proc random_chacha20_core
+    ldy #63
+@
+    mva state,y outbuf,y
+    dey
+    bpl @-
+
+; xxx: for (int i=0; i<10; i++) { eight quarterrounds }
+
+    ldy #9
+
+rounds
+    QUARTERROUND 0, 4, 8, 12
+    QUARTERROUND 1, 5, 9, 13
+    QUARTERROUND 2, 6, 10, 14
+    QUARTERROUND 3, 7, 11, 15
+    QUARTERROUND 0, 5, 10, 15
+    QUARTERROUND 1, 6, 11, 12
+    QUARTERROUND 2, 7, 8, 13
+    QUARTERROUND 3, 4, 9, 14
+
+    dey
+    jpl rounds
+
+; increase counter for next block
+
+    add64 counter0 one counter0
+    rts
+.endp
+
+.proc random_chacha20
+    ldy position
+    bpl @+
+
+    jsr random_chacha20_core
+
+    ldy #63
+    sty position
+@
+    lda outbuf,y
+    dec position
+
+    rts
+
+position
+    dta 0
+.endp
+
+outbuf
+outbuf0
+    .dword 0
+outbuf1
+    .dword 0
+outbuf2
+    .dword 0
+outbuf3
+    .dword 0
+outbuf4
+    .dword 0
+outbuf5
+    .dword 0
+outbuf6
+    .dword 0
+outbuf7
+    .dword 0
+outbuf8
+    .dword 0
+outbuf9
+    .dword 0
+outbuf10
+    .dword 0
+outbuf11
+    .dword 0
+outbuf12
+    .dword 0
+outbuf13
+    .dword 0
+outbuf14
+    .dword 0
+outbuf15
+    .dword 0
+
+state
+state0
+constant0
+    dta "expa"
+state1
+constant1
+    dta "nd 3"
+state2
+constant2
+    dta "2-by"
+state3
+constant3
+    dta "te k"
+state4
+seed0
+    .dword 0x93ba769e
+state5
+seed1
+    .dword 0xcf1f833e
+state6
+seed2
+    .dword 0x06921c46
+state7
+seed3
+    .dword 0xf57871ac
+state8
+seed4
+    .dword 0x363eca41
+state9
+seed5
+    .dword 0x766a5537
+state10
+seed6
+    .dword 0x04e7a5dc
+state11
+seed7
+    .dword 0xe385505b
+state12
+counter0
+    .dword 0
+state13
+counter1
+    .dword 0
+state14
+nonce0
+    .dword 0x81a3749a
+state15
+nonce1
+    .dword 0x7410533d
+
+one
+    .dword 1,0
+
+.endif
+
 ; -----------------------------------------------------------------------------
 
 .print 'random: ', RANDOM_START, '-', *-1, ' (', *-RANDOM_START, ')'
