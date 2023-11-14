@@ -9,13 +9,17 @@
 ; single_eor    0       5*****  11
 ; four_taps_eor 0       5*****  26
 ; sfc16         2**     4****   230
-; chacha20      5*****  1*      3386
+; chacha20(8)   3***    3***    3386
+; chacha20(12)  4****   2**     3386
+; chacha20(20)  5*****  1*      3386
 ;
 ; fill 4kB byte per byte, DMA off, VBI on for counter
 ;
 ; single_eor          7 frames (0.14s)
 ; four_taps_eor      11 frames (0.22s)
 ; sfc16              87 frames (1.74s)
+; chacha20(8)       142 frames (2.84s)
+; chacha20(12)      209 frames (4.18s)
 ; chacha20          342 frames (6.84s)
 
 
@@ -263,9 +267,9 @@ tmp
 
 ; xxx: for (int i=0; i<10; i++) { eight quarterrounds }
 
-    ldy #9
+    ldy rounds: #10
 
-rounds
+loop
     QUARTERROUND 0, 4, 8, 12
     QUARTERROUND 1, 5, 9, 13
     QUARTERROUND 2, 6, 10, 14
@@ -276,7 +280,7 @@ rounds
     QUARTERROUND 3, 4, 9, 14
 
     dey
-    jpl rounds
+    jne loop
 
 ; increase counter for next block
 

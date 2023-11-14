@@ -10,7 +10,9 @@
 ; single_eor          7 frames (0.14s)
 ; four_taps_eor      11 frames (0.22s)
 ; sfc16              87 frames (1.74s)
-; chacha20          342 frames (6.84s)
+; chacha20(8)       142 frames (2.84s)
+; chacha20(12)      209 frames (4.18s)
+; chacha20(20)      342 frames (6.84s)
 
     org $1000
 
@@ -27,6 +29,10 @@ ptr = $f0
     mwa #$2000 ptr
     mva #0 $022f
     mva #0 $d400
+
+ROUNDS=8
+
+    mva #ROUNDS/2 random_chacha20_core.rounds
 
 @
     lda $d40b
