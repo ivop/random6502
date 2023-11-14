@@ -1,42 +1,65 @@
+;
+; PSEUDO RANDOM NUMBER GENERATOR(S)
+;
+; sfc256 Copyright (C) 2023 by Ivo van Poorten
+;
+; single_eor Copyright (C) ? by White Flame
+; four_taps_eor Copyright (C) 2002 by Lee E. Davison
+;
 
 RANDOM_START = *
 
-; (modified PRNG by White Flame, 0..255 exactly once)
-;    txa         ; seed is 0
-;prng
-;    beq doEor
-;    asl
-;    beq noEor ;if the input was $80, skip the EOR
-;    bcc noEor
-;doEor:
-;    eor #$1d
-;noEor:
-;    sta waveform10,x
-;    inx
-;    bne prng
+; -----------------------------------------------------------------------------
 
-;
+; Modified PRNG by White Flame, 0..255 exactly once, from codebase64.org
 ; NOTE: noticed a run like 1 2 4 8 $10 $20, not good
 
+.proc random_single_eor
+    lda seed
+    beq doEor
+    asl
+    beq noEor ;if the input was $80, skip the EOR
+    bcc noEor
+doEor:
+    eor #$1d
+noEor:
+    sta seed
+    rts
+
+seed
+    dta $ff
+.endp
+;
+
+; -----------------------------------------------------------------------------
+
 ; Lee E. Davison, 8-bits, taps at 7,5,4,3
-;    lda seed
-;    and #%10111000  ; mask-out non feedback bits
-;
-;    ldy #0
-;    .rept 5         ; need 5 to shift out all feedback bits
-;    asl
-;    bcc @+          ; bit clear
-;    iny             ; increment feedback counter
-;@
-;    .endr
-;    tya
-;    lsr
-;    lda seed
-;    rol
-;    sta seed
-;    sta waveform10,x
-;
-; NOTE: random enough?
+; https://philpem.me.uk/leeedavison/6502/prng/index.html
+; NOTE: also has shifted runs
+
+.proc random_four_taps_eor
+    lda seed
+    and #%10111000  ; mask-out non feedback bits
+
+    ldy #0
+    .rept 5         ; need 5 to shift out all feedback bits
+    asl
+    bcc @+          ; bit clear
+    iny             ; increment feedback counter
+@
+    .endr
+    tya
+    lsr
+    lda seed
+    rol
+    sta seed
+    rts
+
+seed
+    dta $ff
+.endp
+
+; -----------------------------------------------------------------------------
 
 ; https://pracrand.sourceforge.net/RNG_engines.txt
 ;
@@ -52,13 +75,17 @@ RANDOM_START = *
 ; sfc32       3***    5***** 0       16 bytes    best speed                 32
 ; jsf32       3***    5***** 0       16 bytes    -                          32
 
+; -----------------------------------------------------------------------------
+
 ; sfc16 is simple ;)
+; quality is a lot higher than the eor ones, speed is acceptible
+; without rept/endr it is slightly faster
 
 BARREL_SHIFT=6
 RSHIFT=5
 LSHIFT=3
 
-.proc sfc16
+.proc random_sfc16
     ; tmp = a + b + counter++;
     adw xa xb tmp
     adw tmp counter tmp
@@ -141,8 +168,9 @@ xc_barrel_rshift
     dta 0, 0
 tmp
     dta 0, 0
-
 .endp
+
+; -----------------------------------------------------------------------------
 
 ; -----------------------------------------------------------------------------
 
