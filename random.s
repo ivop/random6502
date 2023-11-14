@@ -1,15 +1,23 @@
 ;
 ; PSEUDO RANDOM NUMBER GENERATOR(S)
 ;
-; sfc256 Copyright (C) 2023 by Ivo van Poorten
-;
+; sfc16 and chacha20 Copyright (C) 2023 by Ivo van Poorten
 ; single_eor Copyright (C) ? by White Flame
 ; four_taps_eor Copyright (C) 2002 by Lee E. Davison
 ;
 ;               quality speed   code+data size
 ; single_eor    0       5*****  11
 ; four_taps_eor 0       5*****  26
-; sfc16         2**     5*****  230
+; sfc16         2**     4****   230
+; chacha20      5*****  1*      3386
+;
+; fill 4kB byte per byte, DMA off, VBI on for counter
+;
+; single_eor          7 frames (0.14s)
+; four_taps_eor      11 frames (0.22s)
+; sfc16              87 frames (1.74s)
+; chacha20          342 frames (6.84s)
+
 
 RANDOM_START = *
 
