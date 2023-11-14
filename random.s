@@ -134,9 +134,7 @@ counter
     dta $7a, $51
 
 xb_rshift
-    dta 0, 0
 xc_lshift
-    dta 0, 0
 xc_barrel_lshift
     dta 0, 0
 xc_barrel_rshift
