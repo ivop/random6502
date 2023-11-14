@@ -188,7 +188,8 @@ tmp
 ; -----------------------------------------------------------------------------
 
 ; Chacha20
-; based on PractRand and OpenSSL
+; https://en.wikipedia.org/wiki/Salsa20
+; inspired by PractRand and OpenSSL
 
 .ifdef RANDOM_ENABLE_CHACHA20
 
