@@ -17,7 +17,7 @@
 ;
 ; single_eor          7 frames (0.14s)
 ; four_taps_eor      11 frames (0.22s)
-; sfc16              87 frames (1.74s)
+; sfc16              48 frames (0.96)
 ; chacha20(8)       142 frames (2.84s)
 ; chacha20(12)      209 frames (4.18s)
 ; chacha20          342 frames (6.84s)
@@ -111,6 +111,14 @@ RSHIFT=5
 LSHIFT=3
 
 .proc random_sfc16
+    lda buffered
+    beq calculate_new
+
+    dec buffered
+    lda tmp+1
+    rts
+
+calculate_new
     ; tmp = a + b + counter++;
     adw xa xb tmp
     adw tmp counter tmp
@@ -166,6 +174,7 @@ LSHIFT=3
 
     ; return tmp
     lda tmp
+    inc buffered
 
     rts
 
@@ -193,6 +202,8 @@ xc_barrel_rshift
     dta 0, 0
 tmp
     dta 0, 0
+buffered
+    dta 0
 .endp
 
 .endif
@@ -394,6 +405,8 @@ one
     .dword 1,0
 
 .endif
+
+; -----------------------------------------------------------------------------
 
 ; -----------------------------------------------------------------------------
 
