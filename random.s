@@ -6,6 +6,10 @@
 ; single_eor Copyright (C) ? by White Flame
 ; four_taps_eor Copyright (C) 2002 by Lee E. Davison
 ;
+;               quality speed   code+data size
+; single_eor    0       5*****  11
+; four_taps_eor 0       5*****  26
+; sfc16         2**     5*****  230
 
 RANDOM_START = *
 
@@ -13,6 +17,8 @@ RANDOM_START = *
 
 ; Modified PRNG by White Flame, 0..255 exactly once, from codebase64.org
 ; NOTE: noticed a run like 1 2 4 8 $10 $20, not good
+
+.ifdef RANDOM_ENABLE_SINGLE_EOR
 
 .proc random_single_eor
     lda seed
@@ -29,13 +35,16 @@ noEor:
 seed
     dta $ff
 .endp
-;
+
+.endif
 
 ; -----------------------------------------------------------------------------
 
 ; Lee E. Davison, 8-bits, taps at 7,5,4,3
 ; https://philpem.me.uk/leeedavison/6502/prng/index.html
 ; NOTE: also has shifted runs
+
+.ifdef RANDOM_ENABLE_FOUR_TAPS_EOR
 
 .proc random_four_taps_eor
     lda seed
@@ -59,6 +68,8 @@ seed
     dta $ff
 .endp
 
+.endif
+
 ; -----------------------------------------------------------------------------
 
 ; https://pracrand.sourceforge.net/RNG_engines.txt
@@ -80,6 +91,8 @@ seed
 ; sfc16 is simple ;)
 ; quality is a lot higher than the eor ones, speed is acceptible
 ; without rept/endr it is slightly faster
+
+.ifdef RANDOM_ENABLE_SFC16
 
 BARREL_SHIFT=6
 RSHIFT=5
@@ -169,6 +182,8 @@ xc_barrel_rshift
 tmp
     dta 0, 0
 .endp
+
+.endif
 
 ; -----------------------------------------------------------------------------
 
