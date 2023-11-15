@@ -20,4 +20,4 @@ for i in `seq 1 114` ; do
     r4=`echo $res4 | cut -d' ' -f$i`
     r5=`echo $res5 | cut -d' ' -f$i`
     echo "| $name | $r0 | $r1| $r2 | $r3 | $r4 | $r5 |"
-done
+done | sed -e 's/FAILED/:x:/g' -e 's/WEAK/:blue_square:/g' -e 's/PASSED/:white_check_mark:/g'
