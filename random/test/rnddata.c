@@ -127,14 +127,6 @@ static void random_chacha20_seed(struct random_chacha20_ctx *ctx, uint32_t *seed
     ctx->rounds = rounds;
 }
 
-static void print_buf(uint32_t *buf) {
-    uint8_t *p = (uint8_t *) buf;
-    for (int i = 0; i<64; i++) {
-        fprintf(stderr, "%02x ", p[i]);
-        if (i%16==15) fprintf(stderr, "\n");
-    }
-}
-
 #undef ROL32
 #undef STEP
 
