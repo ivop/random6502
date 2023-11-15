@@ -33,7 +33,6 @@ ptr = $1e       ; PBUFSZ/PTEMP, we can safely use it and leave 128 bytes
 ; ----------------------------------------------------------------------------
 
 .proc test_prng
-    mwa #$4000 ptr
     mva $022f save_dma
     mva #0 $022f
     mva #0 $d400
@@ -87,6 +86,7 @@ ROUNDS=20
     printsn 0, "single_eor:    "
 
     mwa #random_single_eor test_prng.routine
+    mwa #$4000 ptr
     jsr test_prng
 
     jsr print_number
@@ -96,6 +96,7 @@ ROUNDS=20
     printsn 0, "four_taps_eor: "
 
     mwa #random_four_taps_eor test_prng.routine
+    mwa #$5000 ptr
     jsr test_prng
 
     jsr print_number
@@ -105,6 +106,7 @@ ROUNDS=20
     printsn 0, "sfc16:         "
 
     mwa #random_sfc16 test_prng.routine
+    mwa #$6000 ptr
     jsr test_prng
 
     jsr print_number
@@ -114,6 +116,7 @@ ROUNDS=20
     printsn 0, "chacha20:      "
 
     mwa #random_chacha20 test_prng.routine
+    mwa #$7000 ptr
     jsr test_prng
 
     jsr print_number
