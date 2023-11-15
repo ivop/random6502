@@ -463,7 +463,7 @@ position
 
 state
 constants
-    dta "expand 32-byte k"
+    dta 'expand 32-byte k'
 seeds
 :8  .dword 0
 state_counter
