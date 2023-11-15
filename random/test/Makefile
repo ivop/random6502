@@ -5,4 +5,7 @@ rnddata: rnddata.c
 	$(CC) $(CFLAGS) -o rnddata rnddata.c
 
 clean:
-	rm -f rnddata *~
+	rm -f rnddata *~ *.dat
+
+cleaner: clean
+	rm -f *.report
