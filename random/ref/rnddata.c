@@ -76,6 +76,36 @@ static uint8_t random_four_taps_eor(struct random_four_taps_eor_ctx *ctx) {
 
 /* ---------------------------------------------------------------------- */
 
+struct random_sfc16_ctx {
+    uint16_t A, B, C, counter, tmp;
+    bool buffered;
+};
+
+static void random_sfc16_seed(struct random_sfc16_ctx *ctx, uint16_t seed[]) {
+    ctx->A = seed[0];
+    ctx->B = seed[1];
+    ctx->C = seed[2];
+    ctx->counter = seed[3];
+}
+
+static uint8_t random_sfc16(struct random_sfc16_ctx *ctx) {
+    enum { RSHIFT = 5, LSHIFT = 3, BARREL_SHIFT = 6 };
+
+    if (ctx->buffered) {
+        ctx->buffered = false;
+        return ctx->tmp >> 8;
+    }
+
+    ctx->tmp = ctx->A + ctx->B + ctx->counter++;
+    ctx->A = ctx->B ^ (ctx->B >> RSHIFT);
+    ctx->B = ctx->C + (ctx->C << LSHIFT);
+    ctx->C = ((ctx->C << BARREL_SHIFT) | (ctx->C >> (16-BARREL_SHIFT))) + ctx->tmp;
+    ctx->buffered = true;
+    return ctx->tmp & 0xff;
+}
+
+/* ---------------------------------------------------------------------- */
+
 static void usage(char *name) {
     fprintf(stderr,
             "%s: usage: %s algorithm length > filename\n"
@@ -123,6 +153,13 @@ int main(int argc, char **argv) {
         random_four_taps_eor_seed(ctx, 0xff);
         fnc = (uint8_t (*)(void *ctx)) &random_four_taps_eor;
         break;
+    case 2: {
+        ctx = calloc(1, sizeof(struct random_sfc16_ctx));
+        uint16_t seed[] = { 0xd33e, 0x607e, 0x834a, 0x517a };
+        random_sfc16_seed(ctx, seed);
+        fnc = (uint8_t (*)(void *ctx)) &random_sfc16;
+        break;
+        }
     default:
         fprintf(stderr, "%s: error: algorithm %s not implemented yet\n",
                                                 argv[0], algorithms[algo]);
