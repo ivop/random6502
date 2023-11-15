@@ -270,8 +270,8 @@ int main(int argc, char **argv) {
         break;
         }
     default:
-        fprintf(stderr, "%s: error: algorithm %s not implemented yet\n",
-                                                argv[0], algorithms[algo]);
+        fprintf(stderr, "%s: error: algorithm %d not implemented yet\n",
+                                                            argv[0], algo);
         return 1;
     }
 
