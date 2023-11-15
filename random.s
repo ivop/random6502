@@ -191,11 +191,13 @@ RANDOM_START_FOUR_TAPS_EOR = *
 
 ; sfc16 is simple ;)
 ; quality is a lot higher than the eor ones, speed is acceptible
-; without rept/endr it is slightly faster
+; with rept/endr it is slightly faster
 
 .ifdef RANDOM_ENABLE_SFC16
 
 RANDOM_START_SFC16 = *
+
+; note: 16-BARREL_SHIFT is 8+2 which can be implemented faster
 
 BARREL_SHIFT=6
 RSHIFT=5
@@ -238,6 +240,7 @@ calculate_new
     ror xb_rshift
     dey
     bne @-
+
     lda xb
     eor xb_rshift
     sta xa
@@ -253,6 +256,7 @@ calculate_new
     rol xc_lshift+1
     dey
     bne @-
+
     adw xc xc_lshift xb
 
     ; c = ((c << BARREL_SHIFT) | (c >> (16 - BARREL_SHIFT))) + tmp
@@ -264,12 +268,14 @@ calculate_new
     rol xc_barrel_lshift+1
     dey
     bne @-
+
     ldy #16-BARREL_SHIFT
 @
     lsr xc_barrel_rshift+1
     ror xc_barrel_rshift
     dey
     bne @-
+
     lda xc_barrel_lshift
     ora xc_barrel_rshift
     sta xc
