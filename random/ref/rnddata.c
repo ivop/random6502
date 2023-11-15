@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <stdint.h>
 #include <stdbool.h>
+#include <string.h>
 
 /* ---------------------------------------------------------------------- */
 
@@ -81,7 +82,7 @@ struct random_sfc16_ctx {
     bool buffered;
 };
 
-static void random_sfc16_seed(struct random_sfc16_ctx *ctx, uint16_t seed[]) {
+static void random_sfc16_seed(struct random_sfc16_ctx *ctx, uint16_t *seed) {
     ctx->A = seed[0];
     ctx->B = seed[1];
     ctx->C = seed[2];
@@ -102,6 +103,86 @@ static uint8_t random_sfc16(struct random_sfc16_ctx *ctx) {
     ctx->C = ((ctx->C << BARREL_SHIFT) | (ctx->C >> (16-BARREL_SHIFT))) + ctx->tmp;
     ctx->buffered = true;
     return ctx->tmp & 0xff;
+}
+
+/* ---------------------------------------------------------------------- */
+
+struct random_chacha20_ctx {
+    uint32_t state[16], outbuf[16];
+    int position, rounds;
+
+};
+
+static const uint32_t pack32(uint8_t a, uint8_t b, uint8_t c, uint8_t d) {
+    return a | (b<<8) | (c<<16) | (d<<24);
+}
+
+static void random_chacha20_seed(struct random_chacha20_ctx *ctx, uint32_t *seed, int rounds) {
+    ctx->state[0] = pack32('e', 'x', 'p', 'a');
+    ctx->state[1] = pack32('n', 'd', ' ', '3');
+    ctx->state[2] = pack32('2', '-', 'b', 'y');
+    ctx->state[3] = pack32('t', 'e', ' ', 'k');
+    for (int i=0; i<12; i++) ctx->state[4+i] = seed[i];
+    ctx->position = -1;
+    ctx->rounds = rounds;
+}
+
+static void print_buf(uint32_t *buf) {
+    uint8_t *p = (uint8_t *) buf;
+    for (int i = 0; i<64; i++) {
+        fprintf(stderr, "%02x ", p[i]);
+        if (i%16==15) fprintf(stderr, "\n");
+    }
+}
+
+#undef ROL32
+#undef STEP
+
+#define ROL32(v, r) ( ((v) << (r)) | ((v) >> (32-(r))) )
+
+#define STEP(x, y, z, r) \
+    buf[x] += buf[y]; \
+    buf[z] ^= buf[x]; \
+    buf[z] = ROL32(buf[z], r);
+
+static inline void random_chacha20_quarter_round(uint32_t *buf, int a, int b, int c, int d) {
+    STEP(a,b,d,16);
+    STEP(c,d,b,12);
+    STEP(a,b,d,8);
+    STEP(c,d,b,7);
+}
+
+#undef ROL32
+#undef STEP
+
+static void random_chacha20_core(struct random_chacha20_ctx *ctx) {
+    memcpy(ctx->outbuf, ctx->state, sizeof(ctx->outbuf));
+
+    for (int i=0; i<ctx->rounds; i+=2) {
+        random_chacha20_quarter_round(ctx->outbuf, 0, 4,  8, 12);
+        random_chacha20_quarter_round(ctx->outbuf, 1, 5,  9, 13);
+        random_chacha20_quarter_round(ctx->outbuf, 2, 6, 10, 14);
+        random_chacha20_quarter_round(ctx->outbuf, 3, 7, 11, 15);
+        random_chacha20_quarter_round(ctx->outbuf, 0, 5, 10, 15);
+        random_chacha20_quarter_round(ctx->outbuf, 1, 6, 11, 12);
+        random_chacha20_quarter_round(ctx->outbuf, 2, 7,  8, 13);
+        random_chacha20_quarter_round(ctx->outbuf, 3, 4,  9, 14);
+    }
+
+    ctx->state[12]++;
+    if (!ctx->state[12]) ctx->state[13]++;
+}
+
+static uint8_t random_chacha20(struct random_chacha20_ctx *ctx) {
+    if (ctx->position < 0) {
+        random_chacha20_core(ctx);
+        ctx->position = 63;
+    }
+
+    int w = ctx->position >> 2;
+    int s = ctx->position & 3;
+    ctx->position--;
+    return (ctx->outbuf[w] & (0xff << (s*8))) >> (s*8);
 }
 
 /* ---------------------------------------------------------------------- */
@@ -158,6 +239,42 @@ int main(int argc, char **argv) {
         uint16_t seed[] = { 0xd33e, 0x607e, 0x834a, 0x517a };
         random_sfc16_seed(ctx, seed);
         fnc = (uint8_t (*)(void *ctx)) &random_sfc16;
+        break;
+        }
+    case 3: {
+        ctx = calloc(1, sizeof(struct random_chacha20_ctx));
+        uint32_t seed[] = {
+            0x93ba769e, 0xcf1f833e, 0x06921c46, 0xf57871ac,
+            0x363eca41, 0x766a5537, 0x04e7a5dc, 0xe385505b,
+            0, 0,
+            0x81a3749a, 0x7410533d
+        };
+        random_chacha20_seed(ctx, seed, 8);
+        fnc = (uint8_t (*)(void *ctx)) &random_chacha20;
+        break;
+        }
+    case 4: {
+        ctx = calloc(1, sizeof(struct random_chacha20_ctx));
+        uint32_t seed[] = {
+            0x93ba769e, 0xcf1f833e, 0x06921c46, 0xf57871ac,
+            0x363eca41, 0x766a5537, 0x04e7a5dc, 0xe385505b,
+            0, 0,
+            0x81a3749a, 0x7410533d
+        };
+        random_chacha20_seed(ctx, seed, 12);
+        fnc = (uint8_t (*)(void *ctx)) &random_chacha20;
+        break;
+        }
+    case 5: {
+        ctx = calloc(1, sizeof(struct random_chacha20_ctx));
+        uint32_t seed[] = {
+            0x93ba769e, 0xcf1f833e, 0x06921c46, 0xf57871ac,
+            0x363eca41, 0x766a5537, 0x04e7a5dc, 0xe385505b,
+            0, 0,
+            0x81a3749a, 0x7410533d
+        };
+        random_chacha20_seed(ctx, seed, 20);
+        fnc = (uint8_t (*)(void *ctx)) &random_chacha20;
         break;
         }
     default:
