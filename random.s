@@ -5,22 +5,102 @@
 ; single_eor Copyright (C) ? by White Flame
 ; four_taps_eor Copyright (C) 2002 by Lee E. Davison
 ;
-;               quality speed   code+data       data only
-; single_eor    0       5*****  11              1
-; four_taps_eor 0       5*****  26              1
-; sfc16         2**     4****   246             15
-; chacha20(8)   3***    4****   3568            128
-; chacha20(12)  4****   3***    3568            128
-; chacha20(20)  5*****  2**     3568            128
+;               quality speed   code+data       ZP
+; single_eor    0       5*****  17              1
+; four_taps_eor 0       5*****  37              1
+; sfc16         2**     4****   185             14
+; chacha20(8)   3***    4****   2450            64
+; chacha20(12)  4****   3***    2450            64
+; chacha20(20)  5*****  2**     2450            64
 ;
 ; fill 4kB byte per byte, DMA off, VBI on for counter
 ;
 ; single_eor          7 frames (0.14s)
 ; four_taps_eor      11 frames (0.22s)
-; sfc16              48 frames (0.96)
-; chacha20(8)        68 frames (1.36s)
-; chacha20(12)       98 frames (2.96s)
-; chacha20          157 frames (3.14s)
+; sfc16              48 frames (0.96s)
+; chacha20(8)        56 frames (1.12s)
+; chacha20(12)       80 frames (1.60s)
+; chacha20          127 frames (2.54s)
+
+; -----------------------------------------------------------------------------
+
+WHERE = *
+
+; -----------------------------------------------------------------------------
+
+; ZERO PAGE
+
+    org $80
+
+.ifdef RANDOM_ENABLE_CHACHA20
+outbuf
+outbuf0
+    .ds 4
+outbuf1
+    .ds 4
+outbuf2
+    .ds 4
+outbuf3
+    .ds 4
+outbuf4
+    .ds 4
+outbuf5
+    .ds 4
+outbuf6
+    .ds 4
+outbuf7
+    .ds 4
+outbuf8
+    .ds 4
+outbuf9
+    .ds 4
+outbuf10
+    .ds 4
+outbuf11
+    .ds 4
+outbuf12
+    .ds 4
+outbuf13
+    .ds 4
+outbuf14
+    .ds 4
+outbuf15
+    .ds 4
+.endif
+
+.ifdef RANDOM_ENABLE_SFC16
+xa
+    .ds 2
+xb
+    .ds 2
+xc
+    .ds 2
+sfc16_counter
+    .ds 2
+xb_rshift
+xc_lshift
+xc_barrel_lshift
+    .ds 2
+xc_barrel_rshift
+    .ds 2
+tmp
+    .ds 2
+
+.endif
+
+.ifdef RANDOM_ENABLE_FOUR_TAPS_EOR
+xor4seed
+    .ds 1
+.endif
+
+.ifdef RANDOM_ENABLE_SINGLE_EOR
+xor1seed
+    .ds 1
+.endif
+
+; -----------------------------------------------------------------------------
+
+    org WHERE
 
 ; -----------------------------------------------------------------------------
 
@@ -31,8 +111,13 @@
 
 RANDOM_START_SINGLE_EOR = *
 
+.proc random_single_eor_seed
+    sta xor1seed
+    rts
+.endp
+
 .proc random_single_eor
-    lda seed
+    lda xor1seed
     beq doEor
     asl
     beq noEor ;if the input was $80, skip the EOR
@@ -40,11 +125,8 @@ RANDOM_START_SINGLE_EOR = *
 doEor:
     eor #$1d
 noEor:
-    sta seed
+    sta xor1seed
     rts
-
-seed
-    dta $ff
 .endp
 
 .print 'single_eor: ', RANDOM_START_SINGLE_EOR, '-', *-1, ' (', *-RANDOM_START_SINGLE_EOR, ')'
@@ -61,8 +143,13 @@ seed
 
 RANDOM_START_FOUR_TAPS_EOR = *
 
+.proc random_four_taps_eor_seed
+    sta xor4seed
+    rts
+.endp
+
 .proc random_four_taps_eor
-    lda seed
+    lda xor4seed
     and #%10111000  ; mask-out non feedback bits
 
     ldy #0
@@ -74,13 +161,10 @@ RANDOM_START_FOUR_TAPS_EOR = *
     .endr
     tya
     lsr
-    lda seed
+    lda xor4seed
     rol
-    sta seed
+    sta xor4seed
     rts
-
-seed
-    dta $ff
 .endp
 
 .print 'four_taps_eor: ', RANDOM_START_FOUR_TAPS_EOR, '-', *-1, ' (', *-RANDOM_START_FOUR_TAPS_EOR, ')'
@@ -117,6 +201,21 @@ BARREL_SHIFT=6
 RSHIFT=5
 LSHIFT=3
 
+; AX = pointer to 8 bytes seed
+
+.proc random_sfc16_seed
+    sta seed+1
+    stx seed
+
+    ldx #7
+@
+    lda seed: $1234,x
+    sta xa,x
+    dex
+    bpl @-
+    rts
+.endp
+
 .proc random_sfc16
     lda buffered
     beq calculate_new
@@ -128,8 +227,8 @@ LSHIFT=3
 calculate_new
     ; tmp = a + b + counter++;
     adw xa xb tmp
-    adw tmp counter tmp
-    inw counter
+    adw tmp sfc16_counter tmp
+    inw sfc16_counter
 
     ; a = b ^ (b >> RSHIFT)
     mwa xb xb_rshift
@@ -185,30 +284,6 @@ calculate_new
 
     rts
 
-; size if $e0 bytes ($144 with rept/endr) which is quite a lot for
-; deterministic behaviour (instead of using RANDOM)
-;
-; NOTE: include noise.dat from disk, see data.s
-
-; seeded from /dev/urandom
-seed64      ; auto seeded to a,b,c and counter
-xa
-    dta $3e, $d3
-xb
-    dta $7e, $60
-xc
-    dta $4a, $83
-counter
-    dta $7a, $51
-
-xb_rshift
-xc_lshift
-xc_barrel_lshift
-    dta 0, 0
-xc_barrel_rshift
-    dta 0, 0
-tmp
-    dta 0, 0
 buffered
     dta 0
 .endp
@@ -338,7 +413,7 @@ loop
 
 ; increase counter for next block
 
-    inc64 counter0
+    inc64 state_counter
     rts
 
 rounds_counter
@@ -363,89 +438,31 @@ position
     dta 0
 .endp
 
-outbuf
-outbuf0
-    .dword 0
-outbuf1
-    .dword 0
-outbuf2
-    .dword 0
-outbuf3
-    .dword 0
-outbuf4
-    .dword 0
-outbuf5
-    .dword 0
-outbuf6
-    .dword 0
-outbuf7
-    .dword 0
-outbuf8
-    .dword 0
-outbuf9
-    .dword 0
-outbuf10
-    .dword 0
-outbuf11
-    .dword 0
-outbuf12
-    .dword 0
-outbuf13
-    .dword 0
-outbuf14
-    .dword 0
-outbuf15
-    .dword 0
+; AX = pointer to 12 dwords (48 bytes) seed, counter and nonce
+
+.proc random_chacha20_seed
+    sta seed+1
+    stx seed
+
+    ldx #47
+@
+    lda seed: $1234,x
+    sta state+16,x
+    dex
+    bpl @-
+
+    rts
+.endp
 
 state
-state0
-constant0
-    dta "expa"
-state1
-constant1
-    dta "nd 3"
-state2
-constant2
-    dta "2-by"
-state3
-constant3
-    dta "te k"
-state4
-seed0
-    .dword 0x93ba769e
-state5
-seed1
-    .dword 0xcf1f833e
-state6
-seed2
-    .dword 0x06921c46
-state7
-seed3
-    .dword 0xf57871ac
-state8
-seed4
-    .dword 0x363eca41
-state9
-seed5
-    .dword 0x766a5537
-state10
-seed6
-    .dword 0x04e7a5dc
-state11
-seed7
-    .dword 0xe385505b
-state12
-counter0
-    .dword 0
-state13
-counter1
-    .dword 0
-state14
-nonce0
-    .dword 0x81a3749a
-state15
-nonce1
-    .dword 0x7410533d
+constants
+    dta "expand 32-byte k"
+seeds
+:8  .dword 0
+state_counter
+:2  .dword 0
+nonce
+:2  .dword 0
 
 .print 'chacha20: ', RANDOM_START_CHACHA20, '-', *-1, ' (', *-RANDOM_START_CHACHA20, ')'
 
