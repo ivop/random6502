@@ -17,10 +17,10 @@
 ;
 ; single_eor          7 frames (0.14s)
 ; four_taps_eor      11 frames (0.22s)
-; sfc16              42 frames (0.84s)
+; sfc16              41 frames (0.82s)
 ; chacha20(8)        56 frames (1.12s)
-; chacha20(12)       80 frames (1.60s)
-; chacha20          127 frames (2.54s)
+; chacha20(12)       88 frames (1.76s)
+; chacha20(20)      127 frames (2.54s)
 
 ; -----------------------------------------------------------------------------
 
@@ -457,6 +457,7 @@ position
     dex
     bpl @-
 
+    mva #$ff random_chacha20.position
     rts
 .endp
 

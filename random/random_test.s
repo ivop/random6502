@@ -33,6 +33,11 @@ ptr = $1e       ; PBUFSZ/PTEMP, we can safely use it and leave 128 bytes
 ; ----------------------------------------------------------------------------
 
 .proc test_prng
+    lda ptr+1
+    clc
+    adc #$10
+    sta msb_end
+
     mva $022f save_dma
     mva #0 $022f
     mva #0 $d400
@@ -51,7 +56,8 @@ fill
     sta $d01a
 
     inw ptr
-    cpw ptr #$5000
+    lda ptr+1
+    cmp msb_end: #$12
     bne fill
 
     mwa 19 ptr          ; number of frames Big-Endian
@@ -64,26 +70,11 @@ fill
 ; ----------------------------------------------------------------------------
 
 .proc main
-    lda #$ff
-    jsr random_single_eor_seed
-
-    lda #$ff
-    jsr random_four_taps_eor_seed
-
-    lda #>sfc16_seed
-    ldx #<sfc16_seed
-    jsr random_sfc16_seed
-
-    lda #>chacha20_seed
-    ldx #<chacha20_seed
-    jsr random_chacha20_seed
-
-ROUNDS=20
-    mva #ROUNDS/2 random_chacha20_core.rounds
-
-; --------------------------------------
 
     printsn 0, "single_eor:    "
+
+    lda #$ff
+    jsr random_single_eor_seed
 
     mwa #random_single_eor test_prng.routine
     mwa #$4000 ptr
@@ -95,6 +86,9 @@ ROUNDS=20
 
     printsn 0, "four_taps_eor: "
 
+    lda #$ff
+    jsr random_four_taps_eor_seed
+
     mwa #random_four_taps_eor test_prng.routine
     mwa #$5000 ptr
     jsr test_prng
@@ -105,6 +99,10 @@ ROUNDS=20
 
     printsn 0, "sfc16:         "
 
+    lda #>sfc16_seed
+    ldx #<sfc16_seed
+    jsr random_sfc16_seed
+
     mwa #random_sfc16 test_prng.routine
     mwa #$6000 ptr
     jsr test_prng
@@ -113,10 +111,45 @@ ROUNDS=20
 
 ; --------
 
-    printsn 0, "chacha20:      "
+    printsn 0, "chacha20(8):   "
 
+    lda #>chacha20_seed
+    ldx #<chacha20_seed
+    jsr random_chacha20_seed
+
+    mva #8/2 random_chacha20_core.rounds
     mwa #random_chacha20 test_prng.routine
     mwa #$7000 ptr
+    jsr test_prng
+
+    jsr print_number
+
+; --------
+
+    printsn 0, "chacha20(12):  "
+
+    lda #>chacha20_seed
+    ldx #<chacha20_seed
+    jsr random_chacha20_seed
+
+    mva #12/2 random_chacha20_core.rounds
+    mwa #random_chacha20 test_prng.routine
+    mwa #$8000 ptr
+    jsr test_prng
+
+    jsr print_number
+
+; --------
+
+    printsn 0, "chacha20(20):  "
+
+    lda #>chacha20_seed
+    ldx #<chacha20_seed
+    jsr random_chacha20_seed
+
+    mva #20/2 random_chacha20_core.rounds
+    mwa #random_chacha20 test_prng.routine
+    mwa #$9000 ptr
     jsr test_prng
 
     jsr print_number
