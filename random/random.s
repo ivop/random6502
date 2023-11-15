@@ -21,6 +21,8 @@
 ; chacha20(8)        56 frames (1.12s)
 ; chacha20(12)       88 frames (1.76s)
 ; chacha20(20)      127 frames (2.54s)
+;
+; see: https://pracrand.sourceforge.net/RNG_engines.txt for more details
 
 ; -----------------------------------------------------------------------------
 
@@ -181,8 +183,6 @@ RANDOM_START_FOUR_TAPS_EOR = *
 ; efiix32x384 5*****  3***   0       1552 bytes  crypto                     32
 ; chacha(8)   5*****  1*     3***    124 bytes   crypto + random access     32
 ; hc256       5*****  2**    3***    8580 bytes  best quality, best crypto  32
-;
-;             quality speed  theory  size        notes                    bits
 ; sfc16       2**     5***** 0       8 bytes     fastest RNG & smallest RNG 16
 ; sfc32       3***    5***** 0       16 bytes    best speed                 32
 ; jsf32       3***    5***** 0       16 bytes    -                          32
@@ -215,6 +215,9 @@ LSHIFT=3
     sta xa,x
     dex
     bpl @-
+
+; XXX: seeds with 64-bit, so call random_sfc16 8x (seed with 48-bit is 10x)
+
     rts
 .endp
 
