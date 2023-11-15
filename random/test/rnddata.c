@@ -82,13 +82,6 @@ struct random_sfc16_ctx {
     bool buffered;
 };
 
-static void random_sfc16_seed(struct random_sfc16_ctx *ctx, uint16_t *seed) {
-    ctx->A = seed[0];
-    ctx->B = seed[1];
-    ctx->C = seed[2];
-    ctx->counter = seed[3];
-}
-
 static uint8_t random_sfc16(struct random_sfc16_ctx *ctx) {
     enum { RSHIFT = 5, LSHIFT = 3, BARREL_SHIFT = 6 };
 
@@ -103,6 +96,15 @@ static uint8_t random_sfc16(struct random_sfc16_ctx *ctx) {
     ctx->C = ((ctx->C << BARREL_SHIFT) | (ctx->C >> (16-BARREL_SHIFT))) + ctx->tmp;
     ctx->buffered = true;
     return ctx->tmp & 0xff;
+}
+
+static void random_sfc16_seed(struct random_sfc16_ctx *ctx, uint16_t *seed) {
+    ctx->A = seed[0];
+    ctx->B = seed[1];
+    ctx->C = seed[2];
+    ctx->counter = seed[3];
+    // 8x16-bits discarded
+    for (int i=0; i<16; i++) random_sfc16(ctx);
 }
 
 /* ---------------------------------------------------------------------- */

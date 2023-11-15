@@ -216,7 +216,13 @@ LSHIFT=3
     dex
     bpl @-
 
-; XXX: seeds with 64-bit, so call random_sfc16 8x (seed with 48-bit is 10x)
+    ldx #15             ; discard 8x16 bits
+@
+    stx savex
+    jsr random_sfc16
+    ldx savex: #0
+    dex
+    bpl @-
 
     rts
 .endp
