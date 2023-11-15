@@ -12,7 +12,8 @@ static char *algorithms[] = {
     "sfc16",
     "chacha20(8)",
     "chacha20(12)",
-    "chacha20(20)"
+    "chacha20(20)",
+    "jsf32"
 };
 
 static const int nalgorithms = sizeof(algorithms)/sizeof(char*);
@@ -129,9 +130,6 @@ static void random_chacha20_seed(struct random_chacha20_ctx *ctx, uint32_t *seed
     ctx->rounds = rounds;
 }
 
-#undef ROL32
-#undef STEP
-
 #define ROL32(v, r) ( ((v) << (r)) | ((v) >> (32-(r))) )
 
 #define STEP(x, y, z, r) \
@@ -145,9 +143,6 @@ static inline void random_chacha20_quarter_round(uint32_t *buf, int a, int b, in
     STEP(a,b,d,8);
     STEP(c,d,b,7);
 }
-
-#undef ROL32
-#undef STEP
 
 static void random_chacha20_core(struct random_chacha20_ctx *ctx) {
     memcpy(ctx->outbuf, ctx->state, sizeof(ctx->outbuf));
@@ -177,6 +172,42 @@ static uint8_t random_chacha20(struct random_chacha20_ctx *ctx) {
     int s = ctx->position & 3;
     ctx->position--;
     return (ctx->outbuf[w] & (0xff << (s*8))) >> (s*8);
+}
+
+/* ---------------------------------------------------------------------- */
+
+struct random_jsf32_ctx {
+    uint32_t a,b,c,d;
+    int pos;
+};
+
+static void random_jsf32_core(struct random_jsf32_ctx *ctx) {
+    uint32_t e = ctx->a - ROL32(ctx->b, 27);
+    ctx->a = ctx->b ^ ROL32(ctx->c, 17);
+    ctx->b = ctx->c + ctx->d;
+    ctx->c = ctx->d + e;
+    ctx->d =      e + ctx->a;
+    // random number is d
+}
+
+static uint8_t random_jsf32(struct random_jsf32_ctx *ctx) {
+    if (ctx->pos < 0) {
+        random_jsf32_core(ctx);
+        ctx->pos = 3;
+    }
+
+    int s = ctx->pos;
+    ctx->pos--;
+    return (ctx->d & (0xff << (s*8))) >> (s*8);
+}
+
+static void random_jsf32_seed(struct random_jsf32_ctx *ctx, uint64_t seed) {
+    ctx->a = 0xf1ea5eed ^ (seed >> 32);
+    ctx->b = seed;                      // truncated
+    ctx->c = seed ^ (seed >> 32);       // truncated
+    ctx->d = seed;                      // truncated
+    ctx->pos = -1;
+    for (int i=0; i<20; i++) random_jsf32_core(ctx);
 }
 
 /* ---------------------------------------------------------------------- */
@@ -269,6 +300,12 @@ int main(int argc, char **argv) {
         };
         random_chacha20_seed(ctx, seed, 20);
         fnc = (uint8_t (*)(void *ctx)) &random_chacha20;
+        break;
+        }
+    case 6: {
+        ctx = calloc(1, sizeof(struct random_jsf32_ctx));
+        random_jsf32_seed(ctx, 0xdeadbeefb01dface);
+        fnc = (uint8_t (*)(void *ctx)) &random_jsf32;
         break;
         }
     default:

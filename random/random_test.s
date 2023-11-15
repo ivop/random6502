@@ -20,6 +20,7 @@
 .define RANDOM_ENABLE_FOUR_TAPS_EOR
 .define RANDOM_ENABLE_SFC16
 .define RANDOM_ENABLE_CHACHA20
+.define RANDOM_ENABLE_JSF32
 
     icl 'random.s'
     icl 'cio.s'
@@ -154,6 +155,20 @@ fill
 
     jsr print_number
 
+; --------
+
+    printsn 0, "jsf32:         "
+
+    lda #>jsf32_seed
+    ldx #<jsf32_seed
+    jsr random_jsf32_seed
+
+    mwa #random_jsf32 test_prng.routine
+    mwa #$a000 ptr
+    jsr test_prng
+
+    jsr print_number
+
     jmp *
 .endp
 
@@ -241,6 +256,11 @@ chacha20_seed
     .dword 0xe385505b                   ; seed7
     .dword 0, 0                         ; counter
     .dword 0x81a3749a, 0x7410533d       ; nonce
+
+; ----------------------------------------------------------------------------
+
+jsf32_seed
+    .dword 0xb01dface, 0xdeadbeef
 
 ; ----------------------------------------------------------------------------
 

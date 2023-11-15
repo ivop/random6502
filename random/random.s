@@ -9,9 +9,10 @@
 ; single_eor    0       5*****  17              1
 ; four_taps_eor 0       5*****  37              1
 ; sfc16         2**     4****   185             14
-; chacha20(8)   3***    4****   2450            64
+; chacha20(8)   4****   4****   2450            64
 ; chacha20(12)  4****   3***    2450            64
 ; chacha20(20)  5*****  2**     2450            64
+; jsf32         3***    4****   360             24
 ;
 ; fill 4kB byte per byte, DMA off, VBI on for counter
 ;
@@ -21,6 +22,7 @@
 ; chacha20(8)        56 frames (1.12s)
 ; chacha20(12)       88 frames (1.76s)
 ; chacha20(20)      127 frames (2.54s)
+; jsf32              62 frames (1.24s)
 ;
 ; see: https://pracrand.sourceforge.net/RNG_engines.txt for more details
 
@@ -33,6 +35,21 @@ WHERE = *
 ; ZERO PAGE
 
     org $80
+
+.ifdef RANDOM_ENABLE_JSF32
+a32
+    .ds 4
+b32
+    .ds 4
+c32
+    .ds 4
+d32
+    .ds 4
+e32
+    .ds 4
+f32
+    .ds 4
+.endif
 
 .ifdef RANDOM_ENABLE_CHACHA20
 outbuf
@@ -309,13 +326,7 @@ buffered
 
 ; -----------------------------------------------------------------------------
 
-; Chacha20
-; https://en.wikipedia.org/wiki/Salsa20
-; inspired by PractRand and OpenSSL
-
-.ifdef RANDOM_ENABLE_CHACHA20
-
-RANDOM_START_CHACHA20 = *
+; MACROS
 
 .macro inc64 loc
     clc
@@ -403,6 +414,16 @@ RANDOM_START_CHACHA20 = *
     STEP outbuf:CCC outbuf:DDD outbuf:BBB 7
 .endm
 
+; -----------------------------------------------------------------------------
+
+; Chacha20
+; https://en.wikipedia.org/wiki/Salsa20
+; inspired by PractRand and OpenSSL
+
+.ifdef RANDOM_ENABLE_CHACHA20
+
+RANDOM_START_CHACHA20 = *
+
 .proc random_chacha20_core
     ldy #63
 @
@@ -485,6 +506,117 @@ nonce
 .endif
 
 ; -----------------------------------------------------------------------------
+
+; MORE MACROS ;)
+
+.macro sub32 srcloc subloc dstloc
+    sec
+    .rept 4, #-1
+    lda :srcloc+#
+    sbc :subloc+#
+    sta :dstloc+#
+    .endr
+.endm
+
+; -----------------------------------------------------------------------------
+
+; jsf32
+
+.ifdef RANDOM_ENABLE_JSF32
+
+RANDOM_START_JSF32 = *
+
+.proc random_jsf32_core
+    ; e = a - rol32(b,27);
+    mwa b32 e32
+    mwa b32+2 e32+2
+    rol32 e32 27
+    sub32 a32 e32 e32
+
+    ; f = rol32(c,17)
+    mwa c32 f32
+    mwa c32+2 f32+2
+    rol32 f32 17
+
+    ; a = b ^ f
+    xor32 b32 f32 a32
+
+    ; b = c + d
+    add32 c32 d32 b32
+
+    ; c = d + e
+    add32 d32 e32 c32
+
+    ; d = e + a
+    add32 e32 a32 d32
+
+    rts
+.endp
+
+.proc random_jsf32
+    ldy pos
+    bpl @+
+
+    jsr random_jsf32_core
+
+    ldy #3
+    sty pos
+@
+    lda d32,y
+    dec pos
+
+    rts
+
+pos
+    dta -1
+.endp
+
+; pointer to uint64_t in XA
+
+.proc random_jsf32_seed
+    sta seedloc+1
+    stx seedloc
+
+    ldx #7
+@
+    lda seedloc: $1234,x
+    sta seed,x
+    dex
+    bpl @-
+
+    mwa #$5eed a32
+    mwa #$f1ea a32+2
+
+    xor32 a32 seed+4 a32
+
+    .rept 4, #-1
+    lda seed+#
+    sta b32+#
+    sta d32+#
+    .endr
+
+    xor32 b32 seed+4 c32
+
+    ldx #19
+@
+    stx savex
+
+    jsr random_jsf32_core
+
+    ldx savex: #0
+    dex
+    bpl @-
+
+    mva #$ff random_jsf32.pos
+    rts
+
+seed
+    .dword 0, 0
+.endp
+
+.print 'jsf32: ', RANDOM_START_JSF32, '-', *-1, ' (', *-RANDOM_START_JSF32, ')'
+
+.endif
 
 ; -----------------------------------------------------------------------------
 
