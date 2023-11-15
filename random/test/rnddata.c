@@ -113,7 +113,7 @@ struct random_chacha20_ctx {
 
 };
 
-static const uint32_t pack32(uint8_t a, uint8_t b, uint8_t c, uint8_t d) {
+static inline uint32_t pack32(const uint8_t a, const uint8_t b, const uint8_t c, const uint8_t d) {
     return a | (b<<8) | (c<<16) | (d<<24);
 }
 
