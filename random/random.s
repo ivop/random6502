@@ -18,7 +18,7 @@
 ;
 ; single_eor          7 frames (0.14s)
 ; four_taps_eor      11 frames (0.22s)
-; sfc16              41 frames (0.82s)
+; sfc16              27 frames (0.54s)
 ; chacha20(8)        56 frames (1.12s)
 ; chacha20(12)       88 frames (1.76s)
 ; chacha20(20)      127 frames (2.54s)
@@ -98,9 +98,6 @@ sfc16_counter
     .ds 2
 xb_rshift
 xc_lshift
-xc_barrel_lshift
-    .ds 2
-xc_barrel_rshift
     .ds 2
 tmp
     .ds 2
@@ -214,12 +211,6 @@ RANDOM_START_FOUR_TAPS_EOR = *
 
 RANDOM_START_SFC16 = *
 
-; note: 16-BARREL_SHIFT is 8+2 which can be implemented faster
-
-BARREL_SHIFT=6
-RSHIFT=5
-LSHIFT=3
-
 ; AX = pointer to 8 bytes seed
 
 .proc random_sfc16_seed
@@ -260,12 +251,10 @@ calculate_new
 
     ; a = b ^ (b >> RSHIFT)
     mwa xb xb_rshift
-    ldy #RSHIFT
-@
+    .rept 5
     lsr xb_rshift+1
     ror xb_rshift
-    dey
-    bne @-
+    .endr
 
     lda xb
     eor xb_rshift
@@ -276,38 +265,25 @@ calculate_new
 
     ; b = c + (c << LSHIFT)
     mwa xc xc_lshift
-    ldy #LSHIFT
-@
+    .rept 3
     asl xc_lshift
     rol xc_lshift+1
-    dey
-    bne @-
+    .endr
 
     adw xc xc_lshift xb
 
     ; c = ((c << BARREL_SHIFT) | (c >> (16 - BARREL_SHIFT))) + tmp
-    mwa xc xc_barrel_lshift
-    mwa xc xc_barrel_rshift
-    ldy #BARREL_SHIFT
-@
-    asl xc_barrel_lshift
-    rol xc_barrel_lshift+1
-    dey
-    bne @-
+    ; equals
+    ; c = rol16(c,BARREL_SHIFT) + tmp
 
-    ldy #16-BARREL_SHIFT
-@
-    lsr xc_barrel_rshift+1
-    ror xc_barrel_rshift
-    dey
-    bne @-
-
-    lda xc_barrel_lshift
-    ora xc_barrel_rshift
+    .rept 6
+    asl xc
+    rol xc+1
+    lda xc
+    adc #0
     sta xc
-    lda xc_barrel_lshift+1
-    ora xc_barrel_rshift+1
-    sta xc+1
+    .endr
+
     adw xc tmp xc
 
     ; return tmp
