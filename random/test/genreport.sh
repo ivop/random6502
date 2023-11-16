@@ -1,13 +1,13 @@
 #! /bin/bash
 
-names=`tail -n +9 raw0.report  | grep '|' | cut -d'|' -f1,2 | sed 's/|[ ]*/_/g' | sed 's/_0//g'`
-res0=`tail -n +9 raw0.report  | grep '|' | cut -d'|' -f6`
-res1=`tail -n +9 raw1.report  | grep '|' | cut -d'|' -f6`
-res2=`tail -n +9 raw2.report  | grep '|' | cut -d'|' -f6`
-res3=`tail -n +9 raw3.report  | grep '|' | cut -d'|' -f6`
-res4=`tail -n +9 raw4.report  | grep '|' | cut -d'|' -f6`
-res5=`tail -n +9 raw5.report  | grep '|' | cut -d'|' -f6`
-res6=`tail -n +9 raw6.report  | grep '|' | cut -d'|' -f6`
+names=`tail -n +9 raw0.dh  | grep '|' | cut -d'|' -f1,2 | sed 's/|[ ]*/_/g' | sed 's/_0//g'`
+res0=`tail -n +9 raw0.dh  | grep '|' | cut -d'|' -f6`
+res1=`tail -n +9 raw1.dh  | grep '|' | cut -d'|' -f6`
+res2=`tail -n +9 raw2.dh  | grep '|' | cut -d'|' -f6`
+res3=`tail -n +9 raw3.dh  | grep '|' | cut -d'|' -f6`
+res4=`tail -n +9 raw4.dh  | grep '|' | cut -d'|' -f6`
+res5=`tail -n +9 raw5.dh  | grep '|' | cut -d'|' -f6`
+res6=`tail -n +9 raw6.dh  | grep '|' | cut -d'|' -f6`
 
 echo "| test | eor | eor4 | sfc16 | chacha20(8) | chacha20(12) | chacha20 | jfs32 |"
 echo "| --- | --- | --- | --- | --- | --- | --- | --- |"
