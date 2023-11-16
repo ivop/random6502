@@ -9,9 +9,9 @@
 ; single_eor    0       5*****  17              1
 ; four_taps_eor 0       5*****  37              1
 ; sfc16         2**     4****   185             14
-; chacha20(8)   4****   4****   2450            64
-; chacha20(12)  4****   3***    2450            64
-; chacha20(20)  5*****  2**     2450            64
+; chacha20(8)   4****   3***    2450            64
+; chacha20(12)  5*****  2**     2450            64
+; chacha20(20)  5*****  1*      2450            64
 ; jsf32         3***    4****   360             24
 ;
 ; fill 4kB byte per byte, DMA off, VBI on for counter
@@ -22,7 +22,7 @@
 ; chacha20(8)        56 frames (1.12s)
 ; chacha20(12)       88 frames (1.76s)
 ; chacha20(20)      127 frames (2.54s)
-; jsf32              62 frames (1.24s)
+; jsf32              21 frames (0.42s)
 ;
 ; see: https://pracrand.sourceforge.net/RNG_engines.txt for more details
 
@@ -518,6 +518,16 @@ nonce
     .endr
 .endm
 
+.macro ror32_8 loc
+    ldx :loc+0
+
+    mva :loc+1 :loc+0
+    mva :loc+2 :loc+1
+    mva :loc+3 :loc+2
+
+    stx :loc+3
+.endm
+
 ; -----------------------------------------------------------------------------
 
 ; jsf32
@@ -530,13 +540,15 @@ RANDOM_START_JSF32 = *
     ; e = a - rol32(b,27);
     mwa b32 e32
     mwa b32+2 e32+2
-    rol32 e32 27
+    ror32_8 e32
+    rol32 e32 3
     sub32 a32 e32 e32
 
     ; f = rol32(c,17)
     mwa c32 f32
     mwa c32+2 f32+2
-    rol32 f32 17
+    rol32_16 f32
+    rol32 f32 1
 
     ; a = b ^ f
     xor32 b32 f32 a32
