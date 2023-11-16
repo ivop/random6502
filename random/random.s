@@ -8,11 +8,11 @@
 ;               quality speed   code+data       ZP
 ; single_eor    0       5*****  17              1
 ; four_taps_eor 0       5*****  37              1
-; sfc16         2**     4****   185             14
-; chacha20(8)   4****   3***    2450            64
-; chacha20(12)  5*****  2**     2450            64
-; chacha20(20)  5*****  1*      2450            64
-; jsf32         3***    4****   360             24
+; sfc16         2**     4****   226             12
+; chacha20(8)   4****   3***    2455            64
+; chacha20(12)  5*****  2**     2455            64
+; chacha20(20)  5*****  1*      2455            64
+; jsf32         3***    4****   392             24
 ;
 ; fill 4kB byte per byte, DMA off, VBI on for counter
 ;
@@ -101,7 +101,6 @@ xc_lshift
     .ds 2
 tmp
     .ds 2
-
 .endif
 
 .ifdef RANDOM_ENABLE_FOUR_TAPS_EOR
