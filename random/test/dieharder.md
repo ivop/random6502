@@ -1,3 +1,6 @@
+### DIEHARDER Test Results
+:white_check_mark: PASSED :blue_square: WEAK :x: FAILED
+
 | test | eor | eor4 | sfc16 | chacha20(8) | chacha20(12) | chacha20 | jfs32 |
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | diehard_birthdays | :x: | :x:| :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
