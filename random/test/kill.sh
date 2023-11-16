@@ -1,3 +1,3 @@
 #! /bin/bash
 
-pkill dieharder
+pkill rnddata
