@@ -6,7 +6,7 @@
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | 64MB | 182 :x: | 182 :x: | 182 :white_check_mark: | 182 :white_check_mark: | 182 :white_check_mark: | 182 :white_check_mark: | 182 :white_check_mark: |
 | 128MB | - | - | 199 :white_check_mark: | 199 :white_check_mark: | 199 :white_check_mark: | 198 :white_check_mark: 1 :blue_square: | 199 :white_check_mark: |
-| 256MB | - | - | 217 :white_check_mark: | 217 :white_check_mark: | 217 :white_check_mark: | 217 :white_check_mark: | 216 :white_check_mark: :blue_square: |
+| 256MB | - | - | 217 :white_check_mark: | 217 :white_check_mark: | 217 :white_check_mark: | 217 :white_check_mark: | 216 :white_check_mark: 1 :blue_square: |
 | 512MB | - | - | 232 :white_check_mark: | 232 :white_check_mark: | 232 :white_check_mark: | 232 :white_check_mark: | 232 :white_check_mark: |
 | 1GB | - | - | 250 :white_check_mark: 1 :blue_square: | 251 :white_check_mark: | 251 :white_check_mark: | 250 :white_check_mark: 1 :blue_square: | 251 :white_check_mark: |
 | 2GB | - | - | 269 :white_check_mark: | 269 :white_check_mark: | 269 :white_check_mark: | 269 :white_check_mark: | 269 :white_check_mark: |
