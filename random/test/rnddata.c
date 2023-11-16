@@ -3,6 +3,7 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include <string.h>
+#include <limits.h>
 
 /* ---------------------------------------------------------------------- */
 
@@ -220,6 +221,7 @@ static void usage(char *name) {
             name, name);
     for (int i=0; i<nalgorithms; i++)
         fprintf(stderr, "\t\t%d. %s\n", i, algorithms[i]);
+    fprintf(stderr, "\n\tlength:\t[0 ... %lld]\n", LLONG_MAX);
     fprintf(stderr, "\n");
 }
 
