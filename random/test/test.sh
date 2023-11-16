@@ -2,11 +2,9 @@
 
 set -e
 
-# six tests, eight cores, run parallel
-
-for i in `seq 0 5` ; do
+for i in 0 1 2 3 ; do
     echo "testing algorithm $i"
-    dieharder -f raw$i.dat -g 201 -a > raw$i.report &
+    ./rnddata $i 9223372036854775807 | dieharder -f /dev/stdin -g 201 -a > raw$i.report &
 done
 
 wait `jobs -p`
