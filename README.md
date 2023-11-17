@@ -1,4 +1,4 @@
-# Pseudo Random Number Generators in 6502 assembly
+## Pseudo Random Number Generators in 6502 assembly
 
 This repository contains several PRNGs (Pseudo Random Number Generators) written in 6502 assembly.
 Because I was not happy with the quality of the available generators, I wrote a few more modern ones.
