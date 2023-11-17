@@ -2,17 +2,9 @@
 ; ***** MACROS *****
 ; -----------------------------------------------------------------------------
 
-.macro inc64 loc
-    clc
-    lda :loc
-    adc #1
-    sta :loc
-    .rept 7
-    lda :loc+1+#
-    adc #0
-    sta :loc+1+#
-    .endr
-.endm
+; -----------------------------------------------------------------------------
+; ***** 32-BIT MATH *****
+; -----------------------------------------------------------------------------
 
 .macro add32 srcloc addloc dstloc
     clc
@@ -109,6 +101,49 @@ noC
     bne @-
 .endm
 
+
+.macro movror32_8 src dst
+    lda :src+0
+    sta :dst+3
+    lda :src+1
+    sta :dst+0
+    lda :src+2
+    sta :dst+1
+    lda :src+3
+    sta :dst+2
+.endm
+
+.macro movror32_16 src dst
+    lda :src+0
+    sta :dst+2
+    lda :src+1
+    sta :dst+3
+    lda :src+2
+    sta :dst+0
+    lda :src+3
+    sta :dst+1
+.endm
+
+.macro movrol32_16 src dst
+    movror32_16 :src :dst
+.endm
+
+; -----------------------------------------------------------------------------
+; ***** 64-BIT MATH *****
+; -----------------------------------------------------------------------------
+
+.macro inc64 loc
+    clc
+    lda :loc
+    adc #1
+    sta :loc
+    .rept 7
+    lda :loc+1+#
+    adc #0
+    sta :loc+1+#
+    .endr
+.endm
+
 .macro mov64 src dst
     .rept 8
     lda :src+#
@@ -169,30 +204,4 @@ noC
     eor :eorloc+#
     sta :dstloc+#
     .endr
-.endm
-
-.macro movror32_8 src dst
-    lda :src+0
-    sta :dst+3
-    lda :src+1
-    sta :dst+0
-    lda :src+2
-    sta :dst+1
-    lda :src+3
-    sta :dst+2
-.endm
-
-.macro movror32_16 src dst
-    lda :src+0
-    sta :dst+2
-    lda :src+1
-    sta :dst+3
-    lda :src+2
-    sta :dst+0
-    lda :src+3
-    sta :dst+1
-.endm
-
-.macro movrol32_16 src dst
-    movror32_16 :src :dst
 .endm
