@@ -51,6 +51,8 @@ WHERE = *
 
     org $80
 
+ZP_START = *
+
 .ifdef RANDOM_ENABLE_JSF32
 a32
     .ds 4
@@ -127,6 +129,8 @@ xor4seed
 xor1seed
     .ds 1
 .endif
+
+.print 'ZP: ', ZP_START, '-', *-1, ' (', *-ZP_START, ')'
 
 ; -----------------------------------------------------------------------------
 
