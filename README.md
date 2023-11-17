@@ -11,6 +11,7 @@ Add *opt h-* to suppress Atari 8-bit headers, and output raw binary data.
     <thead>
         <tr>
             <th>Generator</th>
+            <th>Bits</th>
             <th>Code size</th>
             <th>ZP usage</th>
             <th>4096 bytes</th>
@@ -21,6 +22,7 @@ Add *opt h-* to suppress Atari 8-bit headers, and output raw binary data.
     <tbody>
         <tr>
             <td>single_eor</td>
+            <td>8</td>
             <td>17</td>
             <td>1</td>
             <td>0.14s</td>
@@ -29,6 +31,7 @@ Add *opt h-* to suppress Atari 8-bit headers, and output raw binary data.
         </tr>
         <tr>
             <td>four_taps_eor</td>
+            <td>8</td>
             <td>37</td>
             <td>1</td>
             <td>0.22s</td>
@@ -37,6 +40,7 @@ Add *opt h-* to suppress Atari 8-bit headers, and output raw binary data.
         </tr>
         <tr>
             <td>sfc16</td>
+            <td>16</td>
             <td>226 :thumbsup:</td>
             <td>12</td>
             <td>0.54s</td>
@@ -45,6 +49,7 @@ Add *opt h-* to suppress Atari 8-bit headers, and output raw binary data.
         </tr>
         <tr>
             <td>chacha20(8)</td>
+            <td>32</td>
             <td>2559</td>
             <td>64</td>
             <td>0.88s</td>
@@ -53,6 +58,7 @@ Add *opt h-* to suppress Atari 8-bit headers, and output raw binary data.
         </tr>
         <tr>
             <td>chacha20(12)</td>
+            <td>32</td>
             <td>2559</td>
             <td>64</td>
             <td>1.24s</td>
@@ -60,6 +66,7 @@ Add *opt h-* to suppress Atari 8-bit headers, and output raw binary data.
         </tr>
         <tr>
             <td>chacha20(20)</td>
+            <td>32</td>
             <td>2559</td>
             <td>64</td>
             <td>1.96s</td>
@@ -67,6 +74,7 @@ Add *opt h-* to suppress Atari 8-bit headers, and output raw binary data.
         </tr>
         <tr>
             <td>jsf32</td>
+            <td>32</td>
             <td>355</td>
             <td>24</td>
             <td>0.38s :thumbsup:</td>
@@ -75,6 +83,7 @@ Add *opt h-* to suppress Atari 8-bit headers, and output raw binary data.
         </tr>
         <tr>
             <td>arbee</td>
+            <td>64</td>
             <td>600</td>
             <td>56</td>
             <td>0.50s</td>
