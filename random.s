@@ -27,9 +27,9 @@
 ; single_eor          7 frames (0.14s)
 ; four_taps_eor      11 frames (0.22s)
 ; sfc16              27 frames (0.54s)
-; chacha20(8)        56 frames (1.12s)
-; chacha20(12)       88 frames (1.76s)
-; chacha20(20)      127 frames (2.54s)
+; chacha20(8)        45 frames (0.90s)
+; chacha20(12)       63 frames (1.26s)
+; chacha20(20)       99 frames (1.98s)
 ; jsf32              21 frames (0.42s)
 ;
 ; see: https://pracrand.sourceforge.net/RNG_engines.txt for more details
@@ -317,6 +317,9 @@ RANDOM_START_CHACHA20 = *
 .elseif :times=12
     rol32_8 :three
     rol32 :three 4
+.elseif :times=7
+    rol32_8 :three
+    ror32 :three 1
 .else
     rol32 :three :times
 .endif

@@ -12,9 +12,9 @@ Add *opt h-* to suppress Atari 8-bit headers, and output raw binary data.
 | single_eor | 17 | 1 | 0.14s | :x: |
 | four_taps_eor | 37 | 1 | 0.22s | :x: |
 | sfc16 | 226 :thumbsup: | 12 | 0.54s | :star: :star: |
-| chacha20(8) | 2455 | 64 | 1.12s | :star: :star: :star: :star: :star: |
-| chacha20(12) | 2455 | 64 | 1.76s | :star: :star: :star: :star: :star: |
-| chacha20(20) | 2455 | 64 | 2.54 | :star: :star: :star: :star: :star: |
+| chacha20(8) | 2455 | 64 | 0.90s | :star: :star: :star: :star: :star: |
+| chacha20(12) | 2455 | 64 | 1.26s | :star: :star: :star: :star: :star: |
+| chacha20(20) | 2455 | 64 | 1.98s | :star: :star: :star: :star: :star: |
 | jsf32 | 392 | 24 | 0.42s :thumbsup: | :star: :star: :star: |
 
 ### Quality
