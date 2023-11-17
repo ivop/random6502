@@ -14,7 +14,8 @@ static char *algorithms[] = {
     "chacha20(8)",
     "chacha20(12)",
     "chacha20(20)",
-    "jsf32"
+    "jsf32",
+    "arbee"
 };
 
 static const int nalgorithms = sizeof(algorithms)/sizeof(char*);
@@ -100,6 +101,8 @@ static uint8_t random_sfc16(struct random_sfc16_ctx *ctx) {
     return ctx->tmp & 0xff;
 }
 
+// seed --> uint16_t [4]
+
 static void random_sfc16_seed(struct random_sfc16_ctx *ctx, uint16_t *seed) {
     ctx->A = seed[0];
     ctx->B = seed[1];
@@ -120,6 +123,8 @@ struct random_chacha20_ctx {
 static inline uint32_t pack32(const uint8_t a, const uint8_t b, const uint8_t c, const uint8_t d) {
     return a | (b<<8) | (c<<16) | (d<<24);
 }
+
+// seed --> uint32_t [12]
 
 static void random_chacha20_seed(struct random_chacha20_ctx *ctx, uint32_t *seed, int rounds) {
     ctx->state[0] = pack32('e', 'x', 'p', 'a');
@@ -209,6 +214,51 @@ static void random_jsf32_seed(struct random_jsf32_ctx *ctx, uint64_t seed) {
     ctx->d = seed;                      // truncated
     ctx->pos = -1;
     for (int i=0; i<20; i++) random_jsf32_core(ctx);
+}
+
+/* ---------------------------------------------------------------------- */
+
+#define ROL64(v, r) ( ((v) << (r)) | ((v) >> (64-(r))) )
+
+struct random_arbee_ctx {
+    uint64_t a, b, c, d, i;
+    int pos;
+};
+
+static void random_arbee_core(struct random_arbee_ctx *ctx) {
+    uint64_t e = ctx->a + ROL64(ctx->b, 45);
+    ctx->a = ctx->b ^ ROL64(ctx->c, 13);
+    ctx->b = ctx->c + ROL64(ctx->d, 37);
+    ctx->c = e + ctx->d + ctx->i;
+    ctx->d = e + ctx->a;
+    ctx->i++;
+}
+
+static uint8_t random_arbee(struct random_arbee_ctx *ctx) {
+    if (ctx->pos < 0) {
+        random_arbee_core(ctx);
+        ctx->pos = 7;
+    }
+
+    int s = ctx->pos;
+    ctx->pos--;
+    return (ctx->d & (0xffull << (s*8))) >> (s*8);
+}
+
+static void random_arbee_mix(struct random_arbee_ctx *ctx) {
+    for (int i=0; i<12; i++) random_arbee_core(ctx);
+}
+
+// seed --> uint64_t [4]
+
+static void random_arbee_seed(struct random_arbee_ctx *ctx, uint64_t *seed) {
+    ctx->a = seed[0];
+    ctx->b = seed[1];
+    ctx->c = seed[2];
+    ctx->d = seed[3];
+    ctx->i = 1;
+    ctx->pos = -1;
+    random_arbee_mix(ctx);
 }
 
 /* ---------------------------------------------------------------------- */
@@ -308,6 +358,22 @@ int main(int argc, char **argv) {
         ctx = calloc(1, sizeof(struct random_jsf32_ctx));
         random_jsf32_seed(ctx, 0xdeadbeefb01dface);
         fnc = (uint8_t (*)(void *ctx)) &random_jsf32;
+        break;
+        }
+    case 7: {
+        ctx = calloc(1, sizeof(struct random_arbee_ctx));
+        uint64_t seed[] = { 1, 1, 1, 1 };
+        random_arbee_seed(ctx, seed);
+        struct random_arbee_ctx *p = ctx;
+        if (p->a != 0x89048ccb2d89b1d8ull ||
+            p->b != 0x93194005e4b240d8ull ||
+            p->c != 0xea0d42647afb25a5ull ||
+            p->d != 0x4594a972b9964399ull ||
+            p->i != 13) {
+            fprintf(stderr, "%s: error: arbee seeding failed\n", argv[0]);
+            return 1;
+        }
+        fnc = (uint8_t (*)(void *ctx)) &random_arbee;
         break;
         }
     default:
