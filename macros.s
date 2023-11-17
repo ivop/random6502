@@ -85,9 +85,7 @@
     stx :loc+3
 .endm
 
-.macro ror32 loc times
-    ldx #:times
-@
+.macro ror32_1 loc
     lsr :loc+3
     ror :loc+2
     ror :loc+1
@@ -97,6 +95,12 @@
     adc #$7f        ; $7f+C=$80
     sta :loc+3
 noC
+.endm
+
+.macro ror32 loc times
+    ldx #:times
+@
+    ror32_1 :loc
     dex
     bne @-
 .endm

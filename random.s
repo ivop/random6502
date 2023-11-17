@@ -17,9 +17,9 @@
 ; single_eor    0       5*****  17              1
 ; four_taps_eor 0       5*****  37              1
 ; sfc16         2**     4****   226             12
-; chacha20(8)   4****   3***    2455            64
-; chacha20(12)  5*****  2**     2455            64
-; chacha20(20)  5*****  1*      2455            64
+; chacha20(8)   4****   3***    2559            64
+; chacha20(12)  5*****  2**     2559            64
+; chacha20(20)  5*****  1*      2559            64
 ; jsf32         3***    4****   392             24
 ;
 ; fill 4kB byte per byte, DMA off, VBI on for counter
@@ -27,9 +27,9 @@
 ; single_eor          7 frames (0.14s)
 ; four_taps_eor      11 frames (0.22s)
 ; sfc16              27 frames (0.54s)
-; chacha20(8)        45 frames (0.90s)
-; chacha20(12)       63 frames (1.26s)
-; chacha20(20)       99 frames (1.98s)
+; chacha20(8)        45 frames (0.88s)
+; chacha20(12)       63 frames (1.24s)
+; chacha20(20)       99 frames (1.96s)
 ; jsf32              21 frames (0.42s)
 ;
 ; see: https://pracrand.sourceforge.net/RNG_engines.txt for more details
@@ -319,7 +319,7 @@ RANDOM_START_CHACHA20 = *
     rol32 :three 4
 .elseif :times=7
     rol32_8 :three
-    ror32 :three 1
+    ror32_1 :three
 .else
     rol32 :three :times
 .endif
