@@ -34,10 +34,6 @@
 ;
 ; see: https://pracrand.sourceforge.net/RNG_engines.txt for more details
 ;
-; TODO?
-;
-; hc256       5*****  2**    3***    8580 bytes  best quality, best crypto  32
-; sfc32       3***    5***** 0       16 bytes    best speed                 32
 
 ; -----------------------------------------------------------------------------
 
