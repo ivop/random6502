@@ -21,6 +21,7 @@
 ; chacha20(12)  5*****  2**     2559            64
 ; chacha20(20)  5*****  1*      2559            64
 ; jsf32         3***    4****   355             24
+; arbee         3***    4****   600             56
 ;
 ; fill 4kB byte per byte, DMA off, VBI on for counter
 ;
@@ -31,6 +32,7 @@
 ; chacha20(12)       63 frames (1.24s)
 ; chacha20(20)       99 frames (1.96s)
 ; jsf32              19 frames (0.38s)
+; arbee              25 frames (0.50s)
 ;
 ; see: https://pracrand.sourceforge.net/RNG_engines.txt for more details
 ;
