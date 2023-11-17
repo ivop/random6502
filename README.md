@@ -7,16 +7,83 @@ Add *opt h-* to suppress Atari 8-bit headers, and output raw binary data.
 
 ### Overview
 
-| Generator | Code size | ZP usage | 4096 bytes | Quality |
-| --- | --- | --- | --- | --- |
-| single_eor | 17 | 1 | 0.14s | :x: |
-| four_taps_eor | 37 | 1 | 0.22s | :x: |
-| sfc16 | 226 :thumbsup: | 12 | 0.54s | :star: :star: |
-| chacha20(8) | 2559 | 64 | 0.88s | :star: :star: :star: :star: :star: |
-| chacha20(12) | 2559 | 64 | 1.24s | :star: :star: :star: :star: :star: |
-| chacha20(20) | 2559 | 64 | 1.96s | :star: :star: :star: :star: :star: |
-| jsf32 | 355 | 24 | 0.38s :thumbsup: | :star: :star: :star: |
-| arbee | 600 | 56 | 0.50s | :star: :star: :star: :star: |
+<table>
+    <thead>
+        <tr>
+            <th>Generator</th>
+            <th>Code size</th>
+            <th>ZP usage</th>
+            <th>4096 bytes</th>
+            <th>Quality</th>
+            <th>Notes</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>single_eor</td>
+            <td>17</td>
+            <td>1</td>
+            <td>0.14s</td>
+            <td>:x:</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>four_taps_eor</td>
+            <td>37</td>
+            <td>1</td>
+            <td>0.22s</td>
+            <td>:x:</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>sfc16</td>
+            <td>226 :thumbsup:</td>
+            <td>12</td>
+            <td>0.54s</td>
+            <td>:star: :star:</td>
+            <td>smallest</td>
+        </tr>
+        <tr>
+            <td>chacha20(8)</td>
+            <td>2559</td>
+            <td>64</td>
+            <td>0.88s</td>
+            <td>:star: :star: :star: :star: :star:</td>
+            <td rowspan=3 >crypto, random access</td>
+        </tr>
+        <tr>
+            <td>chacha20(12)</td>
+            <td>2559</td>
+            <td>64</td>
+            <td>1.24s</td>
+            <td>:star: :star: :star: :star: :star:</td>
+        </tr>
+        <tr>
+            <td>chacha20(20)</td>
+            <td>2559</td>
+            <td>64</td>
+            <td>1.96s</td>
+            <td>:star: :star: :star: :star: :star:</td>
+        </tr>
+        <tr>
+            <td>jsf32</td>
+            <td>355</td>
+            <td>24</td>
+            <td>0.38s :thumbsup:</td>
+            <td>:star: :star: :star:</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>arbee</td>
+            <td>600</td>
+            <td>56</td>
+            <td>0.50s</td>
+            <td>:star: :star: :star: :star:</td>
+            <td>entropy pooling</td>
+        </tr>
+    </tbody>
+</table>
+
 
 ### Quality
 
