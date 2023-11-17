@@ -134,6 +134,26 @@ noC
     bne @-
 .endm
 
+.macro ror64 loc times
+    ldx #:times
+@
+    lsr :loc+7
+    ror :loc+6
+    ror :loc+5
+    ror :loc+4
+    ror :loc+3
+    ror :loc+2
+    ror :loc+1
+    ror :loc
+    bcc noC
+    lda :loc+7
+    adc #$7f        ; $7f+C=$80
+    sta :loc+7
+noC
+    dex
+    bne @-
+.endm
+
 .macro add64 srcloc addloc dstloc
     clc
     .rept 8, #-1
