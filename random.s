@@ -209,6 +209,8 @@ RANDOM_START_SFC16 = *
     dex
     bpl @-
 
+    mva #0 random_sfc16.buffered
+
     rts
 .endp
 
