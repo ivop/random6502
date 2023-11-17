@@ -71,7 +71,7 @@ Add *opt h-* to suppress Atari 8-bit headers, and output raw binary data.
             <td>24</td>
             <td>0.38s :thumbsup:</td>
             <td>:star: :star: :star:</td>
-            <td></td>
+            <td>fastest</td>
         </tr>
         <tr>
             <td>arbee</td>
