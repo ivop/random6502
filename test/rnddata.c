@@ -235,7 +235,8 @@ static void random_arbee_core(struct random_arbee_ctx *ctx) {
     f = ROL64(ctx->d, 37);
     ctx->b = ctx->c + f;
 
-    ctx->c = e + ctx->d + ctx->i;
+    ctx->c = e + ctx->d;
+    ctx->c = ctx->c + ctx->i;
     ctx->d = e + ctx->a;
     ctx->i++;
 }
