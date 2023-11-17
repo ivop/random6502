@@ -3,7 +3,7 @@
 This repository contains several PRNGs (Pseudo Random Number Generators) written in 6502 assembly.
 Because I was not happy with the quality of the available generators, I wrote a few more modern ones.
 The code was written for the Atari 8-bit with [Mad-Assembler](https://github.com/tebe6502/Mad-Assembler), but should be easy to port to other 6502 based systems.
-Add *opt h-* to suppress Atri 8-bit headers, and output raw binary data.
+Add *opt h-* to suppress Atari 8-bit headers, and output raw binary data.
 
 ### Overview
 
