@@ -12,8 +12,8 @@ Add *opt h-* to suppress Atari 8-bit headers, and output raw binary data.
         <tr>
             <th>Generator</th>
             <th>Bits</th>
-            <th>Code size</th>
-            <th>ZP usage</th>
+            <th>Size</th>
+            <th>ZP</th>
             <th>4096 bytes</th>
             <th>Quality</th>
             <th>Notes</th>
@@ -93,6 +93,32 @@ Add *opt h-* to suppress Atari 8-bit headers, and output raw binary data.
     </tbody>
 </table>
 
+### Bits
+
+This is the internal word size. Each generator outputs bytes.
+Larger word sizes are buffered and returned as bytes.
+The most significant byte first, down to the least significant one, after which a new word is calculated on the next call.
+
+### Size
+
+This is the size of all 6502 code, including variables or constant data that is not in zero page.
+Algorithms with large tables, like efiix or hc256, are avoided.
+
+### ZP
+
+The amount of bytes needed in zero page.
+Most of the time this is the internal state, sometimes combined with space for a few temporary variables for speed during calculation.
+
+### Speed
+
+This is the time it takes to generate and store 4096 bytes.
+The test code runs on an unmodified Atari 8-bit with at least 48kB of RAM.
+Screen DMA is disabled (no ANTIC cycle stealing), but the OS VBI still runs to keep track of time.
+Most loops are unrolled.
+Rotates that are larger than half the word size are inverted (left becomes right).
+Those that are a multiple of 8 are replaced by moves.
+Moves and rotates are combined when possible.
+Non-multiples of 8 are split into a multiple of 8 and a residue (which might be shifting a few places back, too).
 
 ### Quality
 
