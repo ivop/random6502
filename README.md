@@ -30,6 +30,10 @@ https://pracrand.sourceforge.net/Tests_results.txt for test results.
 In short, **chacha20** is the best of the generators in this repo, then **jsf32**, and finally **sfc16**.
 In terms of speed, ignoring the bad PRNGs, **jsf32** is the fastest. In terms of code size and ZP usage, **sfc16** wins.
 
+### Perspective
+
+The 6502 was launched in September 1975. An unmodified Atari 8-bit with a 6502 clocked at ±1.8Mhz, display DMA disabled, and VBI enabled for the timer, needs ± 31317 hours to generate 1TB of data (3 years, 209 days and 21 hours) with the jsf32 generator. For perspective, my x86_64 machine (Octacore AMD FX-8320 3.5GHz, launched October 2012) does that in about an hour on a single core.
+
 ### Credits
 
 6502 implementations of sfc16, chacha20, and jsf32 are Copyright © 2023 by Ivo van Poorten.
