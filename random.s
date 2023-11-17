@@ -1,9 +1,17 @@
 ;
-; PSEUDO RANDOM NUMBER GENERATOR(S)
+; PSEUDO RANDOM NUMBER GENERATORS
 ;
-; sfc16 and chacha20 Copyright (C) 2023 by Ivo van Poorten
-; single_eor Copyright (C) ? by White Flame
+; 6502 implementations of sfc16, chacha20, and jsf32:
+; Copyright (C) 2023 by Ivo van Poorten
+;
+; sfc16, chacha20, and jsf32 based on C++ code by Chris Doty-Humphrey
+; jsf32's C++ code is mostly by Robert Jenkins
+; both are public domain
+; https://pracrand.sourceforge.net/
+;
+; single_eor Copyright (C) ? by White Flame (codebase64.org)
 ; four_taps_eor Copyright (C) 2002 by Lee E. Davison
+; https://philpem.me.uk/leeedavison/6502/prng/index.html
 ;
 ;               quality speed   code+data       ZP
 ; single_eor    0       5*****  17              1
@@ -25,6 +33,11 @@
 ; jsf32              21 frames (0.42s)
 ;
 ; see: https://pracrand.sourceforge.net/RNG_engines.txt for more details
+;
+; TODO?
+;
+; hc256       5*****  2**    3***    8580 bytes  best quality, best crypto  32
+; sfc32       3***    5***** 0       16 bytes    best speed                 32
 
 ; -----------------------------------------------------------------------------
 
@@ -118,9 +131,8 @@ xor1seed
     org WHERE
 
 ; -----------------------------------------------------------------------------
-
-; Modified PRNG by White Flame, 0..255 exactly once, from codebase64.org
-; NOTE: noticed a run like 1 2 4 8 $10 $20, not good
+; *** SIMPLE EOR ****
+; -----------------------------------------------------------------------------
 
 .ifdef RANDOM_ENABLE_SINGLE_EOR
 
@@ -149,10 +161,8 @@ noEor:
 .endif
 
 ; -----------------------------------------------------------------------------
-
-; Lee E. Davison, 8-bits, taps at 7,5,4,3
-; https://philpem.me.uk/leeedavison/6502/prng/index.html
-; NOTE: also has shifted runs
+; *** FOUR_TAPS_EOR ***
+; -----------------------------------------------------------------------------
 
 .ifdef RANDOM_ENABLE_FOUR_TAPS_EOR
 
@@ -187,24 +197,8 @@ RANDOM_START_FOUR_TAPS_EOR = *
 .endif
 
 ; -----------------------------------------------------------------------------
-
-; https://pracrand.sourceforge.net/RNG_engines.txt
-;
-;             quality speed  theory  size        notes                    bits
-; efiix8x384  5*****  3***   0       388         -                           8
-; efiix16x384 5*****  3***   0       776 bytes   -                          16
-; efiix32x384 5*****  3***   0       1552 bytes  crypto                     32
-; chacha(8)   5*****  1*     3***    124 bytes   crypto + random access     32
-; hc256       5*****  2**    3***    8580 bytes  best quality, best crypto  32
-; sfc16       2**     5***** 0       8 bytes     fastest RNG & smallest RNG 16
-; sfc32       3***    5***** 0       16 bytes    best speed                 32
-; jsf32       3***    5***** 0       16 bytes    -                          32
-
+; **** SFC16 ****
 ; -----------------------------------------------------------------------------
-
-; sfc16 is simple ;)
-; quality is a lot higher than the eor ones, speed is acceptible
-; with rept/endr it is slightly faster
 
 .ifdef RANDOM_ENABLE_SFC16
 
@@ -390,10 +384,8 @@ buffered
 .endm
 
 ; -----------------------------------------------------------------------------
-
-; Chacha20
-; https://en.wikipedia.org/wiki/Salsa20
-; inspired by PractRand and OpenSSL
+; ***** CHACHA20 *****
+; -----------------------------------------------------------------------------
 
 .ifdef RANDOM_ENABLE_CHACHA20
 
@@ -504,8 +496,8 @@ nonce
 .endm
 
 ; -----------------------------------------------------------------------------
-
-; jsf32
+; ***** JSF32 *****
+; -----------------------------------------------------------------------------
 
 .ifdef RANDOM_ENABLE_JSF32
 
