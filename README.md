@@ -32,11 +32,12 @@ In terms of speed, ignoring the bad PRNGs, **jsf32** is the fastest. In terms of
 
 ### Credits
 
-6502 implementations of sfc16, chacha20, and jsf32 are Copyright (C) 2023 by Ivo van Poorten  
-sfc16, chacha20, and jsf32 based on C++ code by Chris Doty-Humphrey  
-jsf32's C++ code is mostly by Robert Jenkins  
+6502 implementations of sfc16, chacha20, and jsf32 are Copyright © 2023 by Ivo van Poorten.
+
+sfc16, chacha20, and jsf32 based on C++ code Copyright © by Chris Doty-Humphrey.  
+jsf32's C++ code is mostly by Robert Jenkins.  
 Both are public domain. See https://pracrand.sourceforge.net/
 
-single_eor is Copyright (C) ? by White Flame, https://codebase64.org/doku.php?id=base:small_fast_8-bit_prng  
-four_taps_eor is Copyright (C) 2002 by Lee E. Davison, https://philpem.me.uk/leeedavison/6502/prng/index.html  
+single_eor is Copyright © by White Flame, https://codebase64.org/doku.php?id=base:small_fast_8-bit_prng  
+four_taps_eor is Copyright © 2002 by Lee E. Davison, https://philpem.me.uk/leeedavison/6502/prng/index.html  
 
