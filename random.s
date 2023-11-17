@@ -506,21 +506,24 @@ RANDOM_START_ARBEE = *
 .proc random_arbee_core
     ; f = rol64(b, 45)
     mov64 b64 f64
-    rol64 f64 45        ; rol 48, ror 3
+    rol64 f64 48
+    ror64 f64 3
 
     ; e = a + f
     add64 a64 f64 e64
 
     ; f = rol64(c,13)
     mov64 c64 f64
-    rol64 f64 13        ; rol 16, ror 3
+    rol64 f64 16
+    ror64 f64 3
 
     ; a = b ^ f
     eor64 b64 f64 a64
 
     ; f = rol64(d,37)
     mov64 d64 f64
-    rol64 f64 37        ; rol 40, ror 3
+    rol64 f64 40
+    ror64 f64 3
 
     ; b = c + f
     add64 c64 f64 b64
