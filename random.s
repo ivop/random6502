@@ -20,7 +20,7 @@
 ; chacha20(8)   4****   3***    2559            64
 ; chacha20(12)  5*****  2**     2559            64
 ; chacha20(20)  5*****  1*      2559            64
-; jsf32         3***    4****   392             24
+; jsf32         3***    4****   387             24
 ;
 ; fill 4kB byte per byte, DMA off, VBI on for counter
 ;
@@ -433,7 +433,7 @@ RANDOM_START_JSF32 = *
     mwa c32 f32
     mwa c32+2 f32+2
     rol32_16 f32
-    rol32 f32 1
+    rol32_1 f32
 
     ; a = b ^ f
     xor32 b32 f32 a32

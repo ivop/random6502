@@ -31,16 +31,20 @@
     .endr
 .endm
 
-.macro rol32 rolloc times
+.macro rol32_1 loc
+    asl :loc
+    rol :loc+1
+    rol :loc+2
+    rol :loc+3
+    lda :loc
+    adc #0
+    sta :loc
+.endm
+
+.macro rol32 loc times
     ldx #:times
 @
-    asl :rolloc
-    rol :rolloc+1
-    rol :rolloc+2
-    rol :rolloc+3
-    lda :rolloc
-    adc #0
-    sta :rolloc
+    rol32_1 :loc
     dex
     bne @-
 .endm
