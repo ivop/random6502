@@ -53,6 +53,16 @@ WHERE = *
 
 ZP_START = *
 
+.ifdef RANDOM_ENABLE_ARBEE
+a64 .ds 8
+b64 .ds 8
+c64 .ds 8
+d64 .ds 8
+i64 .ds 8
+e64 .ds 8
+f64 .ds 8
+.endif
+
 .ifdef RANDOM_ENABLE_JSF32
 a32 .ds 4
 b32 .ds 4
@@ -482,6 +492,81 @@ seed
 .endp
 
 .print 'jsf32: ', RANDOM_START_JSF32, '-', *-1, ' (', *-RANDOM_START_JSF32, ')'
+
+.endif
+
+; -----------------------------------------------------------------------------
+; ***** ARBEE *****
+; -----------------------------------------------------------------------------
+
+.ifdef RANDOM_ENABLE_ARBEE
+
+RANDOM_START_ARBEE = *
+
+.proc random_arbee_core
+    rts
+.endp
+
+.proc random_arbee
+    ldy pos
+    bpl @+
+
+    jsr random_arbee_core
+
+    ldy #7
+    sty pos
+@
+    lda d64,y
+    dec pos
+
+    rts
+
+pos
+    dta -1
+.endp
+
+.proc random_arbee_mix
+    mva #12 mixcnt
+
+@
+    jsr random_arbee_core
+
+    dec mixcnt
+    bne @-
+
+    rts
+
+mixcnt
+    dta 0
+.endp
+
+.proc random_arbee_seed
+    sta seedloc+1
+    stx seedloc
+
+    ldx #31
+@
+    lda seedloc: $1234,x
+    sta a64,x
+    dex
+    bpl @-
+
+    ldx #7
+    lda #0
+@
+    sta i64,x
+    dex
+    bpl @-
+    mva #1 i64
+
+    mva #$ff random_arbee.pos
+
+    jsr random_arbee_mix
+
+    rts
+.endp
+
+.print 'arbee: ', RANDOM_START_ARBEE, '-', *-1, ' (', *-RANDOM_START_ARBEE, ')'
 
 .endif
 
