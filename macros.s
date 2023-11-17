@@ -170,3 +170,29 @@ noC
     sta :dstloc+#
     .endr
 .endm
+
+.macro movror32_8 src dst
+    lda :src+0
+    sta :dst+3
+    lda :src+1
+    sta :dst+0
+    lda :src+2
+    sta :dst+1
+    lda :src+3
+    sta :dst+2
+.endm
+
+.macro movror32_16 src dst
+    lda :src+0
+    sta :dst+2
+    lda :src+1
+    sta :dst+3
+    lda :src+2
+    sta :dst+0
+    lda :src+3
+    sta :dst+1
+.endm
+
+.macro movrol32_16 src dst
+    movror32_16 :src :dst
+.endm

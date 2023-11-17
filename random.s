@@ -402,17 +402,13 @@ nonce
 RANDOM_START_JSF32 = *
 
 .proc random_jsf32_core
-    ; e = a - rol32(b,27);
-    mwa b32 e32
-    mwa b32+2 e32+2
-    ror32_8 e32
+    ; e = a - rol32(b,27) = a - ror32(b,5)
+    movror32_8 b32 e32
     rol32 e32 3
     sub32 a32 e32 e32
 
     ; f = rol32(c,17)
-    mwa c32 f32
-    mwa c32+2 f32+2
-    rol32_16 f32
+    movrol32_16 c32 f32
     rol32_1 f32
 
     ; a = b ^ f
