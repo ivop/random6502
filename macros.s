@@ -7,10 +7,10 @@
     lda :loc
     adc #1
     sta :loc
-    .rept 7, #
-    lda :loc+#
+    .rept 7, #-1
+    lda :loc+1+#
     adc #0
-    sta :loc+#
+    sta :loc+1+#
     .endr
 .endm
 
