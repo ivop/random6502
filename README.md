@@ -7,7 +7,7 @@ Add *opt h-* to suppress Atari 8-bit headers, and output raw binary data.
 
 ### Overview
 
-| Generator | Code | ZP | 4096 bytes | Quality |
+| Generator | Code size | ZP usage | 4096 bytes | Quality |
 | --- | --- | --- | --- | --- |
 | single_eor | 17 | 1 | 0.14s | :x: |
 | four_taps_eor | 37 | 1 | 0.22s | :x: |
