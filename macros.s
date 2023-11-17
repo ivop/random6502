@@ -7,7 +7,7 @@
     lda :loc
     adc #1
     sta :loc
-    .rept 7, #-1
+    .rept 7
     lda :loc+1+#
     adc #0
     sta :loc+1+#
@@ -16,7 +16,7 @@
 
 .macro add32 srcloc addloc dstloc
     clc
-    .rept 4, #-1
+    .rept 4
     lda :srcloc+#
     adc :addloc+#
     sta :dstloc+#
@@ -24,7 +24,7 @@
 .endm
 
 .macro xor32 srcloc xorloc dstloc
-    .rept 4, #-1
+    .rept 4
     lda :srcloc+#
     eor :xorloc+#
     sta :dstloc+#
@@ -72,7 +72,7 @@
 
 .macro sub32 srcloc subloc dstloc
     sec
-    .rept 4, #-1
+    .rept 4
     lda :srcloc+#
     sbc :subloc+#
     sta :dstloc+#
@@ -110,7 +110,7 @@ noC
 .endm
 
 .macro mov64 src dst
-    .rept 8, #-1
+    .rept 8
     lda :src+#
     sta :dst+#
     .endr
@@ -156,7 +156,7 @@ noC
 
 .macro add64 srcloc addloc dstloc
     clc
-    .rept 8, #-1
+    .rept 8
     lda :srcloc+#
     adc :addloc+#
     sta :dstloc+#
@@ -164,7 +164,7 @@ noC
 .endm
 
 .macro eor64 srcloc eorloc dstloc
-    .rept 8, #-1
+    .rept 8
     lda :srcloc+#
     eor :eorloc+#
     sta :dstloc+#
