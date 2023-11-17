@@ -504,9 +504,9 @@ seed
 RANDOM_START_ARBEE = *
 
 .proc random_arbee_core
-    ; f = rol64(b, 45)
+    ; f = rol64(b, 45) = ror64(b, 19)
     mov64 b64 f64
-    rol64 f64 48
+    ror64 f64 16
     ror64 f64 3
 
     ; e = a + f
