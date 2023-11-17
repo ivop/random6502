@@ -1,6 +1,6 @@
 MADS ?= mads
 
-random_test.xex: random.s random_test.s
+random_test.xex: random.s random_test.s macros.s
 	$(MADS) -o:random_test.xex random_test.s
 
 clean:
