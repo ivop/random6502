@@ -108,3 +108,45 @@ noC
     dex
     bne @-
 .endm
+
+.macro mov64 src dst
+    .rept 8, #-1
+    lda :src+#
+    sta :dst+#
+    .endr
+.endm
+
+.macro rol64 loc times
+    ldx #:times
+@
+    asl :loc
+    rol :loc+1
+    rol :loc+2
+    rol :loc+3
+    rol :loc+4
+    rol :loc+5
+    rol :loc+6
+    rol :loc+7
+    lda :loc
+    adc #0
+    sta :loc
+    dex
+    bne @-
+.endm
+
+.macro add64 srcloc addloc dstloc
+    clc
+    .rept 8, #-1
+    lda :srcloc+#
+    adc :addloc+#
+    sta :dstloc+#
+    .endr
+.endm
+
+.macro eor64 srcloc eorloc dstloc
+    .rept 8, #-1
+    lda :srcloc+#
+    eor :eorloc+#
+    sta :dstloc+#
+    .endr
+.endm

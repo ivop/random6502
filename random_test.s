@@ -16,11 +16,16 @@
 
 ; ----------------------------------------------------------------------------
 
+.ifdef TEST_BATCH1
 .define RANDOM_ENABLE_SINGLE_EOR
 .define RANDOM_ENABLE_FOUR_TAPS_EOR
 .define RANDOM_ENABLE_SFC16
 .define RANDOM_ENABLE_CHACHA20
 .define RANDOM_ENABLE_JSF32
+.endif
+.ifdef TEST_BATCH2
+.define RANDOM_ENABLE_ARBEE
+.endif
 
     icl 'random.s'
     icl 'cio.s'
@@ -71,6 +76,8 @@ fill
 ; ----------------------------------------------------------------------------
 
 .proc main
+
+.ifdef TEST_BATCH1
 
     printsn 0, "single_eor:    "
 
@@ -169,6 +176,26 @@ fill
 
     jsr print_number
 
+.endif
+
+; --------
+
+.ifdef TEST_BATCH2
+
+    printsn 0, "arbee:         "
+
+    lda #>arbee_seed
+    ldx #<arbee_seed
+    jsr random_arbee_seed
+
+    mwa #random_arbee test_prng.routine
+    mwa #$4000 ptr
+    jsr test_prng
+
+    jsr print_number
+
+.endif
+
     jmp *
 .endp
 
@@ -261,6 +288,14 @@ chacha20_seed
 
 jsf32_seed
     .dword 0xb01dface, 0xdeadbeef
+
+; ----------------------------------------------------------------------------
+
+arbee_seed
+    .byte 1,0,0,0, 0,0,0,0
+    .byte 1,0,0,0, 0,0,0,0
+    .byte 1,0,0,0, 0,0,0,0
+    .byte 1,0,0,0, 0,0,0,0
 
 ; ----------------------------------------------------------------------------
 
