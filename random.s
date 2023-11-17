@@ -54,80 +54,50 @@ WHERE = *
 ZP_START = *
 
 .ifdef RANDOM_ENABLE_JSF32
-a32
-    .ds 4
-b32
-    .ds 4
-c32
-    .ds 4
-d32
-    .ds 4
-e32
-    .ds 4
-f32
-    .ds 4
+a32 .ds 4
+b32 .ds 4
+c32 .ds 4
+d32 .ds 4
+e32 .ds 4
+f32 .ds 4
 .endif
 
 .ifdef RANDOM_ENABLE_CHACHA20
 outbuf
-outbuf0
-    .ds 4
-outbuf1
-    .ds 4
-outbuf2
-    .ds 4
-outbuf3
-    .ds 4
-outbuf4
-    .ds 4
-outbuf5
-    .ds 4
-outbuf6
-    .ds 4
-outbuf7
-    .ds 4
-outbuf8
-    .ds 4
-outbuf9
-    .ds 4
-outbuf10
-    .ds 4
-outbuf11
-    .ds 4
-outbuf12
-    .ds 4
-outbuf13
-    .ds 4
-outbuf14
-    .ds 4
-outbuf15
-    .ds 4
+outbuf0 .ds 4
+outbuf1 .ds 4
+outbuf2 .ds 4
+outbuf3 .ds 4
+outbuf4 .ds 4
+outbuf5 .ds 4
+outbuf6 .ds 4
+outbuf7 .ds 4
+outbuf8 .ds 4
+outbuf9 .ds 4
+outbuf10 .ds 4
+outbuf11 .ds 4
+outbuf12 .ds 4
+outbuf13 .ds 4
+outbuf14 .ds 4
+outbuf15 .ds 4
 .endif
 
 .ifdef RANDOM_ENABLE_SFC16
-xa
-    .ds 2
-xb
-    .ds 2
-xc
-    .ds 2
-sfc16_counter
-    .ds 2
+xa .ds 2
+xb .ds 2
+xc .ds 2
+sfc16_counter .ds 2
 xb_rshift
-xc_lshift
-    .ds 2
-tmp
-    .ds 2
+xc_lshift .ds 2
+tmp .ds 2
 .endif
 
 .ifdef RANDOM_ENABLE_FOUR_TAPS_EOR
-xor4seed
-    .ds 1
+xor4seed .ds 1
 .endif
 
 .ifdef RANDOM_ENABLE_SINGLE_EOR
-xor1seed
-    .ds 1
+xor1seed .ds 1
 .endif
 
 .print 'ZP: ', ZP_START, '-', *-1, ' (', *-ZP_START, ')'
