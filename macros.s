@@ -205,3 +205,21 @@ noC
     sta :dstloc+#
     .endr
 .endm
+
+.macro movror64_16 src dst
+    .rept 8
+    mva :src+[[2+#]&7] :dst+#
+    .endr
+.endm
+
+.macro movrol64_16 src dst
+    .rept 8
+    mva :src+# :dst+[[2+#]&7]
+    .endr
+.endm
+
+.macro movror64_24 src dst
+    .rept 8
+    mva :src+[[3+#]&7] :dst+#
+    .endr
+.endm
