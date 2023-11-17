@@ -8,7 +8,7 @@ all: rnddata testu01
 rnddata: rnddata.c
 	$(CC) $(CFLAGS) -o rnddata rnddata.c
 
-testu01:
+testu01: testu01.c
 	$(CC) $(CFLAGS) $(LDFLAGS) -o testu01 testu01.c $(LIBS)
 
 clean:

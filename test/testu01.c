@@ -9,7 +9,7 @@ static unsigned int from_stdin(void) {
     return a;
 }
 
-int main (int argc, char **argv) {
+int main (void) {
     unif01_Gen* gen = unif01_CreateExternGenBits("stdin", from_stdin);
 
 //    bbattery_SmallCrush(gen);
