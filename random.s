@@ -13,27 +13,6 @@
 ; four_taps_eor Copyright (C) 2002 by Lee E. Davison
 ; https://philpem.me.uk/leeedavison/6502/prng/index.html
 ;
-;               quality speed   code+data       ZP
-; single_eor    0       5*****  17              1
-; four_taps_eor 0       5*****  37              1
-; sfc16         2**     4****   226             12
-; chacha20(8)   4****   3***    2559            64
-; chacha20(12)  5*****  2**     2559            64
-; chacha20(20)  5*****  1*      2559            64
-; jsf32         3***    4****   355             24
-; arbee         3***    4****   600             56
-;
-; fill 4kB byte per byte, DMA off, VBI on for counter
-;
-; single_eor          7 frames (0.14s)
-; four_taps_eor      11 frames (0.22s)
-; sfc16              27 frames (0.54s)
-; chacha20(8)        45 frames (0.88s)
-; chacha20(12)       63 frames (1.24s)
-; chacha20(20)       99 frames (1.96s)
-; jsf32              19 frames (0.38s)
-; arbee              25 frames (0.50s)
-;
 ; see: https://pracrand.sourceforge.net/RNG_engines.txt for more details
 ;
 
@@ -417,8 +396,7 @@ RANDOM_START_JSF32 = *
     sub32 a32 e32 e32
 
     ; f = rol32(c,17)
-    movrol32_16 c32 f32
-    rol32_1 f32
+    movrol32_17 c32 f32
 
     ; a = b ^ f
     xor32 b32 f32 a32

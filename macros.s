@@ -147,6 +147,26 @@ noC
     movror32_16 :src :dst
 .endm
 
+.macro movrol32_17 src dst
+    lda :src+0
+    asl
+    sta :dst+2
+    lda :src+1
+    rol
+    sta :dst+3
+    lda :src+2
+    rol
+    sta :dst+0
+    lda :src+3
+    rol
+    sta :dst+1
+    bcc noC
+    lda :dst+2
+    ora #1
+    sta :dst+2
+noC
+.endm
+
 ; -----------------------------------------------------------------------------
 ; ***** 64-BIT MATH *****
 ; -----------------------------------------------------------------------------
