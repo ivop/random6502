@@ -406,7 +406,7 @@ MCS6502ExecNext(
     
 #ifdef PRINT_DEBUG_OUTPUT
     char * dis = DisassembleCurrentInstruction(instruction, context);
-    printf("%04X: %s\n", context->pc, dis);
+    fprintf(stderr, "%04X: %s\n", context->pc, dis);
 #endif
     
     // All instructions will update the PC based on the length of the instruction,
@@ -1067,7 +1067,7 @@ MCS6502ExecNext(
     
 #ifdef PRINT_DEBUG_OUTPUT
     // Dump the context state
-    printf("  PC=%04X SP=01%02X A=%02X X=%02X Y=%02X N=%d V=%d D=%d I=%d Z=%d C=%d\n",
+    fprintf(stderr, "  PC=%04X SP=01%02X A=%02X X=%02X Y=%02X N=%d V=%d D=%d I=%d Z=%d C=%d\n",
            context->pc, context->sp, context->a, context->x, context->y,
            IsNegativeSet(context) ? 1 : 0,
            IsOverflowSet(context) ? 1 : 0,
@@ -1078,11 +1078,11 @@ MCS6502ExecNext(
     
     // Dump stack
     if (context->sp < 0xFF) {
-        printf("  STACK: ");
-        for (uint sp = 0xFF; sp > context->sp; sp--) {
-            printf("%02X ", MCS6502ReadByte(0x0100 + sp, context));
+        fprintf(stderr, "  STACK: ");
+        for (int sp = 0xFF; sp > context->sp; sp--) {
+            fprintf(stderr, "%02X ", MCS6502ReadByte(0x0100 + sp, context));
         }
-        printf("\n");
+        fprintf(stderr, "\n");
     }
 #endif
     
