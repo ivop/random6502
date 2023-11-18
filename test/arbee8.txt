@@ -1,0 +1,195 @@
+========= Summary results of Alphabit =========
+
+ Version:          TestU01 1.2.3
+ Generator:        stdin
+ Number of bits:   104857600
+ Number of statistics:  17
+ Total CPU time:   00:00:03.69
+
+ All tests were passed
+
+========= Summary results of Rabbit =========
+
+ Version:          TestU01 1.2.3
+ Generator:        stdin
+ Number of bits:   104857600
+ Number of statistics:  40
+ Total CPU time:   00:00:50.75
+
+ All tests were passed
+
+============== Summary results of FIPS-140-2 ==============
+
+ Generator:        stdin
+ Number of bits:   20000
+
+       Test          s-value        p-value    FIPS Decision
+ --------------------------------------------------------
+ Monobit               9995           0.53       Pass
+ Poker                14.52           0.49       Pass
+
+ 0 Runs, length 1:     2539                      Pass
+ 0 Runs, length 2:     1240                      Pass
+ 0 Runs, length 3:      652                      Pass
+ 0 Runs, length 4:      314                      Pass
+ 0 Runs, length 5:      151                      Pass
+ 0 Runs, length 6+:     142                      Pass
+
+ 1 Runs, length 1:     2508                      Pass
+ 1 Runs, length 2:     1283                      Pass
+ 1 Runs, length 3:      644                      Pass
+ 1 Runs, length 4:      304                      Pass
+ 1 Runs, length 5:      144                      Pass
+ 1 Runs, length 6+:     155                      Pass
+
+ Longest run of 0:       12           0.70       Pass
+ Longest run of 1:       11           0.91       Pass
+ ----------------------------------------------------------
+ All values are within the required intervals of FIPS-140-2
+
+========= Summary results of SmallCrush =========
+
+ Version:          TestU01 1.2.3
+ Generator:        stdin
+ Number of statistics:  15
+ Total CPU time:   00:00:12.28
+
+ All tests were passed
+
+
+========= Summary results of Crush =========
+
+ Version:          TestU01 1.2.3
+ Generator:        stdin
+ Number of statistics:  144
+ Total CPU time:   00:42:37.19
+
+ All tests were passed
+
+
+========= Summary results of BigCrush =========
+
+ Version:          TestU01 1.2.3
+ Generator:        stdin
+ Number of statistics:  160
+ Total CPU time:   05:29:48.04
+ The following tests gave p-values outside [0.001, 0.9990]:
+ (eps  means a value < 1.0e-300):
+ (eps1 means a value < 1.0e-15):
+
+       Test                          p-value
+ ----------------------------------------------
+ 64  WeightDistrib, r = 26           0.9995 
+ ----------------------------------------------
+ All other tests were passed
+
+
+RNG_test using PractRand version 0.95
+RNG = RNG_stdin, seed = unknown
+test set = core, folding = standard(unknown format)
+
+length= 64 megabytes (2^26 bytes), time= 2.2 seconds
+  no anomalies in 182 test result(s)
+length= 128 megabytes (2^27 bytes), time= 7.6 seconds
+  no anomalies in 199 test result(s)
+length= 256 megabytes (2^28 bytes), time= 15.0 seconds
+  no anomalies in 217 test result(s)
+length= 512 megabytes (2^29 bytes), time= 26.3 seconds
+  no anomalies in 232 test result(s)
+length= 1 gigabyte (2^30 bytes), time= 45.8 seconds
+  no anomalies in 251 test result(s)
+length= 2 gigabytes (2^31 bytes), time= 81.3 seconds
+  no anomalies in 269 test result(s)
+length= 4 gigabytes (2^32 bytes), time= 147 seconds
+  no anomalies in 283 test result(s)
+length= 8 gigabytes (2^33 bytes), time= 280 seconds
+  no anomalies in 300 test result(s)
+length= 16 gigabytes (2^34 bytes), time= 537 seconds
+  no anomalies in 315 test result(s)
+length= 32 gigabytes (2^35 bytes), time= 1042 seconds
+  Test Name                         Raw       Processed     Evaluation
+  [Low1/8]BCFN(2+0,13-0,T)          R=  +8.2  p =  6.3e-4   unusual          
+  ...and 327 test result(s) without anomalies
+length= 64 gigabytes (2^36 bytes), time= 2074 seconds
+  no anomalies in 344 test result(s)
+length= 128 gigabytes (2^37 bytes), time= 4140 seconds
+  no anomalies in 359 test result(s)
+length= 256 gigabytes (2^38 bytes), time= 8176 seconds
+  no anomalies in 372 test result(s)
+length= 512 gigabytes (2^39 bytes), time= 16337 seconds
+  no anomalies in 387 test result(s)
+length= 1 terabyte (2^40 bytes), time= 32619 seconds
+  Test Name                         Raw       Processed     Evaluation
+  mod3n(5):(3,9-6)                  R= +12.4  p =  4.6e-5   unusual          
+  ...and 400 test result(s) without anomalies
+length= 2 terabytes (2^41 bytes), time= 64991 seconds
+  no anomalies in 413 test result(s)
+
+
+
+
+*********************************
+******* REVERSED ****************
+*********************************
+
+========= Summary results of Alphabit =========
+
+ Version:          TestU01 1.2.3
+ Generator:        stdin
+ Number of bits:   104857600
+ Number of statistics:  17
+ Total CPU time:   00:00:04.09
+
+ All tests were passed
+
+========= Summary results of Rabbit =========
+
+ Version:          TestU01 1.2.3
+ Generator:        stdin
+ Number of bits:   104857600
+ Number of statistics:  40
+ Total CPU time:   00:00:51.46
+
+ All tests were passed
+
+============== Summary results of FIPS-140-2 ==============
+
+ Generator:        stdin
+ Number of bits:   20000
+
+       Test          s-value        p-value    FIPS Decision
+ --------------------------------------------------------
+ Monobit              10175         6.8e-3       Pass
+ Poker                19.04           0.21       Pass
+
+ 0 Runs, length 1:     2580                      Pass
+ 0 Runs, length 2:     1225                      Pass
+ 0 Runs, length 3:      616                      Pass
+ 0 Runs, length 4:      311                      Pass
+ 0 Runs, length 5:      156                      Pass
+ 0 Runs, length 6+:     133                      Pass
+
+ 1 Runs, length 1:     2487                      Pass
+ 1 Runs, length 2:     1229                      Pass
+ 1 Runs, length 3:      640                      Pass
+ 1 Runs, length 4:      338                      Pass
+ 1 Runs, length 5:      168                      Pass
+ 1 Runs, length 6+:     158                      Pass
+
+ Longest run of 0:       12           0.70       Pass
+ Longest run of 1:       15           0.26       Pass
+ ----------------------------------------------------------
+ All values are within the required intervals of FIPS-140-2
+
+========= Summary results of SmallCrush =========
+
+ Version:          TestU01 1.2.3
+ Generator:        stdin
+ Number of statistics:  15
+ Total CPU time:   00:00:12.72
+
+ All tests were passed
+
+
+TODO: Crush and BigCrush
+
