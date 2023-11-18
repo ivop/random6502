@@ -12,7 +12,6 @@ static unsigned int from_stdin(void) {
 int main (void) {
     unif01_Gen* gen = unif01_CreateExternGenBits("stdin", from_stdin);
 
-//    bbattery_pseudoDIEHARD(gen);
 //    bbattery_Alphabit(gen, 100*1024*1024.0, 0, 32);
 //    bbattery_Rabbit(gen, 100*1024*1024.0);
 //    bbattery_FIPS_140_2(gen);
