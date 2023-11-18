@@ -2,9 +2,10 @@
 #include <stdint.h>
 #include <limits.h>
 #include <stdlib.h>
+#include <string.h>
+#include "MCS6502.h"
 
-#define CHIPS_IMPL
-#include "m6502.h"
+struct _MCS6502ExecutionContext cpu;
 
 /* ------------------------------------------------------------------------ */
 
@@ -24,8 +25,6 @@ static const int nalgorithms = sizeof(algorithms)/sizeof(char*);
 
 /* ------------------------------------------------------------------------ */
 
-static m6502_t cpu;
-static uint64_t pins;
 static uint8_t memory[65536];
 
 #define SEED_LOCATION 0xf000
@@ -35,7 +34,7 @@ static uint8_t speed[SPEED_SIZE];
 
 /* ------------------------------------------------------------------------ */
 
-static uint8_t memory_read(uint16_t addr) {
+static uint8_t memory_read(uint16_t addr, void *ctx) {
     if (addr == 0xdd0d)
         memory[addr] = 0;
     return memory[addr];
@@ -43,7 +42,7 @@ static uint8_t memory_read(uint16_t addr) {
 
 /* ------------------------------------------------------------------------ */
 
-static void memory_write(uint16_t addr, uint8_t value) {
+static void memory_write(uint16_t addr, uint8_t value, void *ctx) {
     memory[addr] = value;
 }
 
@@ -51,6 +50,13 @@ static void memory_write(uint16_t addr, uint8_t value) {
 
 static int cpu_jsr(uint16_t newpc) {
     int cycles = 0;
+
+    cpu.pc = newpc;
+    while (cpu.pc != newpc+3) {
+        MCS6502ExecNext(&cpu);
+        cycles += cpu.timingForLastOperation;
+    }
+#if 0
     uint16_t addr = 0;
 
     pins = M6502_SYNC;
@@ -58,7 +64,6 @@ static int cpu_jsr(uint16_t newpc) {
     M6502_SET_DATA(pins, memory[newpc]);
     m6502_set_pc(&cpu, newpc);
 
-    int run = INT_MAX;
     while (run--) {
         pins = m6502_tick(&cpu, pins);
         cycles++;
@@ -74,8 +79,8 @@ static int cpu_jsr(uint16_t newpc) {
         if (memory[m6502_pc(&cpu)] == 0xea) run = 1; // one cycle to complete
                                                      // possible pending write
     }
-
-    return cycles - 1;
+#endif
+    return cycles;     // subtaract jsr/rts
 }
 
 /* ------------------------------------------------------------------------ */
@@ -145,7 +150,7 @@ int main(int argc, char **argv) {
 
     fprintf(stderr, "%s: testing %s\n", argv[0], algorithms[algo]);
 
-    pins = m6502_init(&cpu, &(m6502_desc_t){});
+    MCS6502Init(&cpu, memory_read, memory_write, NULL);
 
     FILE *f = fopen("emu_test.img", "rb");
 
@@ -162,14 +167,14 @@ int main(int argc, char **argv) {
     switch (algo) {
     case 0:
     case 1:
-        m6502_set_a(&cpu, 0xff);
+        cpu.a = 0xff;
         break;
     case 2: {
         uint16_t seed[] = { 0xd33e, 0x607e, 0x834a, 0x517a };
         if (big_endian) swap_endian(seed, 2, 4);
         memcpy(memory+SEED_LOCATION, seed, 4*2);
-        m6502_set_a(&cpu, SEED_LOCATION & 0xff);
-        m6502_set_x(&cpu, SEED_LOCATION >> 8);
+        cpu.a = SEED_LOCATION & 0xff;
+        cpu.x = SEED_LOCATION >> 8;
         break;
         }
     case 3:
@@ -183,24 +188,24 @@ int main(int argc, char **argv) {
         };
         if (big_endian) swap_endian(seed, 4, 12);
         memcpy(memory+SEED_LOCATION, seed, 12*4);
-        m6502_set_a(&cpu, SEED_LOCATION & 0xff);
-        m6502_set_x(&cpu, SEED_LOCATION >> 8);
+        cpu.a = SEED_LOCATION & 0xff;
+        cpu.x = SEED_LOCATION >> 8;
         break;
         }
     case 6: {
         uint64_t seed = 0xdeadbeefb01dface;
         if (big_endian) swap_endian(&seed, 8, 1);
         memcpy(memory+SEED_LOCATION, &seed, 8);
-        m6502_set_a(&cpu, SEED_LOCATION & 0xff);
-        m6502_set_x(&cpu, SEED_LOCATION >> 8);
+        cpu.a = SEED_LOCATION & 0xff;
+        cpu.x = SEED_LOCATION >> 8;
         break;
         }
     case 7: {
         uint64_t seed[] = { 1, 1, 1, 1 };
         if (big_endian) swap_endian(seed, 8, 4);
         memcpy(memory+SEED_LOCATION, &seed, 8*4);
-        m6502_set_a(&cpu, SEED_LOCATION & 0xff);
-        m6502_set_x(&cpu, SEED_LOCATION >> 8);
+        cpu.a = SEED_LOCATION & 0xff;
+        cpu.x = SEED_LOCATION >> 8;
         break;
         }
     default:
@@ -217,7 +222,7 @@ int main(int argc, char **argv) {
         if (cycles >= SPEED_SIZE) cycles = SPEED_SIZE-1;
         speed[cycles] = 1;
         total += cycles;
-        putc(m6502_a(&cpu), stdout);
+        putc(cpu.a, stdout);
     }
 
     for (int i=0; i<SPEED_SIZE; i++) {
