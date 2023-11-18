@@ -192,7 +192,7 @@ int main(int argc, char **argv) {
     }
 
     cycles = cpu_jsr(0x0200+algo*8);
-    fprintf(stderr, "%s: seeding took %d cycles\n", argv[0], cycles-3);
+    fprintf(stderr, "%s: seeding took %d cycles\n", argv[0], cycles);
 
     for (long long int i=0; i<length; i++) {
         cycles = cpu_jsr(0x0200+algo*8+4);
@@ -204,7 +204,6 @@ int main(int argc, char **argv) {
 
     for (int i=0; i<SPEED_SIZE; i++) {
         if (speed[i]) {
-//            fprintf(stderr, "%s: a call to random took %d cycles\n", argv[0], i);
             if (i<mincycles) mincycles = i;
             if (i>maxcycles) maxcycles = i;
         }
