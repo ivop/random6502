@@ -125,8 +125,8 @@ int main(int argc, char **argv) {
     case 2: {
         uint16_t seed[] = { 0xd33e, 0x607e, 0x834a, 0x517a };
         memcpy(memory+0x8000, seed, 8);
-        m6502_set_a(&cpu, 0x80);
-        m6502_set_x(&cpu, 0x00);
+        m6502_set_a(&cpu, 0x00);
+        m6502_set_x(&cpu, 0x80);
         break;
         }
     default:

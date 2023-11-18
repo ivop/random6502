@@ -6,7 +6,7 @@ LIBS ?=
 
 all: emu_test
 
-emu_test: emu_test.c emu_test.img
+emu_test: emu_test.c emu_test.img emu_test.s
 	$(CC) $(CFLAGS) $(LDFLAGS) -o emu_test emu_test.c $(LIBS)
 
 emu_test.img: emu_test.s

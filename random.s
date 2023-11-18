@@ -191,8 +191,8 @@ RANDOM_START_SFC16 = *
 ; AX = pointer to 8 bytes seed
 
 .proc random_sfc16_seed
-    sta seed+1
-    stx seed
+    stx seed+1
+    sta seed
 
     ldx #7
 @
@@ -365,8 +365,8 @@ position
 ; AX = pointer to 12 dwords (48 bytes) seed, counter and nonce
 
 .proc random_chacha20_seed
-    sta seed+1
-    stx seed
+    stx seed+1
+    sta seed
 
     ldx #47
 @
@@ -447,8 +447,8 @@ pos
 ; pointer to uint64_t in XA
 
 .proc random_jsf32_seed
-    sta seedloc+1
-    stx seedloc
+    stx seedloc+1
+    sta seedloc
 
     ldx #7
 @
@@ -567,8 +567,8 @@ mixcnt
 .endp
 
 .proc random_arbee_seed
-    sta seedloc+1
-    stx seedloc
+    stx seedloc+1
+    sta seedloc
 
     ldx #31
 @

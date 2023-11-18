@@ -109,8 +109,8 @@ fill
 
     printsn 0, "sfc16:         "
 
-    lda #>sfc16_seed
-    ldx #<sfc16_seed
+    ldx #>sfc16_seed
+    lda #<sfc16_seed
     jsr random_sfc16_seed
 
     mwa #random_sfc16 test_prng.routine
@@ -123,8 +123,8 @@ fill
 
     printsn 0, "chacha20(8):   "
 
-    lda #>chacha20_seed
-    ldx #<chacha20_seed
+    ldx #>chacha20_seed
+    lda #<chacha20_seed
     jsr random_chacha20_seed
 
     mva #8/2 random_chacha20_core.rounds
@@ -138,8 +138,8 @@ fill
 
     printsn 0, "chacha20(12):  "
 
-    lda #>chacha20_seed
-    ldx #<chacha20_seed
+    ldx #>chacha20_seed
+    lda #<chacha20_seed
     jsr random_chacha20_seed
 
     mva #12/2 random_chacha20_core.rounds
@@ -153,8 +153,8 @@ fill
 
     printsn 0, "chacha20(20):  "
 
-    lda #>chacha20_seed
-    ldx #<chacha20_seed
+    ldx #>chacha20_seed
+    lda #<chacha20_seed
     jsr random_chacha20_seed
 
     mva #20/2 random_chacha20_core.rounds
@@ -168,8 +168,8 @@ fill
 
     printsn 0, "jsf32:         "
 
-    lda #>jsf32_seed
-    ldx #<jsf32_seed
+    ldx #>jsf32_seed
+    lda #<jsf32_seed
     jsr random_jsf32_seed
 
     mwa #random_jsf32 test_prng.routine
@@ -186,8 +186,8 @@ fill
 
     printsn 0, "arbee:         "
 
-    lda #>arbee_seed
-    ldx #<arbee_seed
+    ldx #>arbee_seed
+    lda #<arbee_seed
     jsr random_arbee_seed
 
     mwa #random_arbee test_prng.routine
