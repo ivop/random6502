@@ -10,13 +10,17 @@ Add *opt h-* to suppress Atari 8-bit headers, and output raw binary data.
 <table>
     <thead>
         <tr>
-            <th>Generator</th>
-            <th>Bits</th>
-            <th>Size</th>
-            <th>ZP</th>
-            <th>4096 bytes</th>
-            <th>Quality</th>
-            <th>Notes</th>
+            <th rowspan=2>Generator</th>
+            <th rowspan=2>Bits</th>
+            <th rowspan=2>Size</th>
+            <th rowspan=2>ZP</th>
+            <th colspan=2>Speed</th>
+            <th rowspan=2>Quality</th>
+            <th rowspan=2>Notes</th>
+        </tr>
+        <tr>
+            <th>Seed</th>
+            <th>Generate<br>(min/max/avg)</th>
         </tr>
     </thead>
     <tbody>
@@ -25,7 +29,8 @@ Add *opt h-* to suppress Atari 8-bit headers, and output raw binary data.
             <td>8</td>
             <td>17</td>
             <td>1</td>
-            <td>0.14s</td>
+            <td>15</td>
+            <td>23/28/27</td>
             <td>:x:</td>
             <td></td>
         </tr>
@@ -34,7 +39,8 @@ Add *opt h-* to suppress Atari 8-bit headers, and output raw binary data.
             <td>8</td>
             <td>37</td>
             <td>1</td>
-            <td>0.22s</td>
+            <td>15</td>
+            <td>56/60/58</td>
             <td>:x:</td>
             <td></td>
         </tr>
@@ -43,7 +49,8 @@ Add *opt h-* to suppress Atari 8-bit headers, and output raw binary data.
             <td>16</td>
             <td>226 :thumbsup:</td>
             <td>12</td>
-            <td>0.54s</td>
+            <td>3292</td>
+            <td>27/350/186</td>
             <td>:star: :star:</td>
             <td>smallest</td>
         </tr>
@@ -52,7 +59,8 @@ Add *opt h-* to suppress Atari 8-bit headers, and output raw binary data.
             <td>32</td>
             <td>2559</td>
             <td>64</td>
-            <td>0.88s</td>
+            <td>708</td>
+            <td>29/18775/321</td>
             <td>:star: :star: :star: :star: :star:</td>
             <td rowspan=3 >crypto, random access</td>
         </tr>
@@ -61,7 +69,8 @@ Add *opt h-* to suppress Atari 8-bit headers, and output raw binary data.
             <td>32</td>
             <td>2559</td>
             <td>64</td>
-            <td>1.24s</td>
+            <td>708</td>
+            <td>29/27662/459</td>
             <td>:star: :star: :star: :star: :star:</td>
         </tr>
         <tr>
@@ -69,7 +78,8 @@ Add *opt h-* to suppress Atari 8-bit headers, and output raw binary data.
             <td>32</td>
             <td>2559</td>
             <td>64</td>
-            <td>1.96s</td>
+            <td>708</td>
+            <td>29/45352/736</td>
             <td>:star: :star: :star: :star: :star:</td>
         </tr>
         <tr>
@@ -77,7 +87,8 @@ Add *opt h-* to suppress Atari 8-bit headers, and output raw binary data.
             <td>32</td>
             <td>355</td>
             <td>24</td>
-            <td>0.38s :thumbsup:</td>
+            <td>8020</td>
+            <td>29/310/124 :thumbsup:</td>
             <td>:star: :star: :star:</td>
             <td>fastest</td>
         </tr>
@@ -86,7 +97,8 @@ Add *opt h-* to suppress Atari 8-bit headers, and output raw binary data.
             <td>64</td>
             <td>600</td>
             <td>56</td>
-            <td>0.50s</td>
+            <td>14151</td>
+            <td>29/1198/171</td>
             <td>:star: :star: :star: :star:</td>
             <td>entropy pooling</td>
         </tr>
