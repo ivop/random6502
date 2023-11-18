@@ -47,7 +47,7 @@ WHERE = *
 
 ; ZERO PAGE
 
-    org $80
+    org RANDOM_ZERO_PAGE
 
 ZP_START = *
 

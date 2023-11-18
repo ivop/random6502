@@ -1,12 +1,16 @@
 MADS ?= mads
+CC ?= cc
+CFLAGS ?= -O3 -W -Wall -Wextra
+LDFLAGS ?=
+LIBS ?=
 
-all: random_test1.xex random_test2.xex
+all: emu_test
 
-random_test1.xex: random.s random_test.s macros.s
-	$(MADS) -d:TEST_BATCH1 -o:random_test1.xex random_test.s
+emu_test: emu_test.c emu_test.img
+	$(CC) $(CFLAGS) $(LDFLAGS) -o emu_test emu_test.c $(LIBS)
 
-random_test2.xex: random.s random_test.s macros.s
-	$(MADS) -d:TEST_BATCH2 -o:random_test2.xex random_test.s
+emu_test.img: emu_test.s
+	$(MADS) -o:emu_test.img emu_test.s
 
 clean:
-	rm -f random_test*.xex *~
+	rm -f emu_test emu_test.img *~
