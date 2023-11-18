@@ -56,31 +56,8 @@ static int cpu_jsr(uint16_t newpc) {
         MCS6502ExecNext(&cpu);
         cycles += cpu.timingForLastOperation;
     }
-#if 0
-    uint16_t addr = 0;
 
-    pins = M6502_SYNC;
-    M6502_SET_ADDR(pins, newpc);
-    M6502_SET_DATA(pins, memory[newpc]);
-    m6502_set_pc(&cpu, newpc);
-
-    while (run--) {
-        pins = m6502_tick(&cpu, pins);
-        cycles++;
-
-        addr = M6502_GET_ADDR(pins);
-
-        if (pins & M6502_RW) {
-            M6502_SET_DATA(pins, memory_read(addr));
-        } else {
-            memory_write(addr, M6502_GET_DATA(pins));
-        }
-
-        if (memory[m6502_pc(&cpu)] == 0xea) run = 1; // one cycle to complete
-                                                     // possible pending write
-    }
-#endif
-    return cycles;     // subtaract jsr/rts
+    return cycles;
 }
 
 /* ------------------------------------------------------------------------ */
