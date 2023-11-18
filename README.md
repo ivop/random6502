@@ -52,7 +52,7 @@ Add *opt h-* to suppress Atari 8-bit headers, and output raw binary data.
         <tr>
             <td>sfc16</td>
             <td>16</td>
-            <td>226 :thumbsup:</td>
+            <td>226:thumbsup:</td>
             <td>12</td>
             <td>3292</td>
             <td>27</td><td>350</td><td>186</td>
@@ -93,7 +93,7 @@ Add *opt h-* to suppress Atari 8-bit headers, and output raw binary data.
             <td>355</td>
             <td>24</td>
             <td>8020</td>
-            <td>29</td><td>310</td><td>124 :thumbsup:</td>
+            <td>29</td><td>310</td><td>124:thumbsup:</td>
             <td>:star::star::star:</td>
             <td>fastest</td>
         </tr>
