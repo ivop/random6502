@@ -6,6 +6,8 @@
 #define CHIPS_IMPL
 #include "m6502.h"
 
+/* ------------------------------------------------------------------------ */
+
 static char *algorithms[] = {
     "single_eor",
     "four_taps_eor",
@@ -20,6 +22,8 @@ static char *algorithms[] = {
 
 static const int nalgorithms = sizeof(algorithms)/sizeof(char*);
 
+/* ------------------------------------------------------------------------ */
+
 static m6502_t cpu;
 static uint64_t pins;
 static uint8_t memory[65536];
@@ -27,15 +31,21 @@ static uint8_t memory[65536];
 #define SPEED_SIZE 20000
 static uint8_t speed[SPEED_SIZE];
 
+/* ------------------------------------------------------------------------ */
+
 static uint8_t memory_read(uint16_t addr) {
     if (addr == 0xdd0d)
         memory[addr] = 0;
     return memory[addr];
 }
 
+/* ------------------------------------------------------------------------ */
+
 static void memory_write(uint16_t addr, uint8_t value) {
     memory[addr] = value;
 }
+
+/* ------------------------------------------------------------------------ */
 
 static int cpu_jsr(uint16_t newpc) {
     int cycles = 0;
@@ -65,6 +75,28 @@ static int cpu_jsr(uint16_t newpc) {
     return cycles - 1;
 }
 
+/* ------------------------------------------------------------------------ */
+
+// untested
+static void swap_endian(void *q, int wordsize, int length) {
+    uint8_t *p = q;
+    uint8_t t;
+    while (length--) {
+        switch (wordsize) {
+        case 2: t=p[0]; p[0]=p[1]; p[1]=t; break;
+        case 4: t=p[0]; p[0]=p[1]; p[1]=p[2]; p[2]=p[3]; p[3]=t; break;
+        case 8: t=p[0]; p[0]=p[1]; p[1]=p[2]; p[2]=p[3]; p[3]=p[4];
+                p[4]=p[5]; p[5]=p[6]; p[6]=p[7]; p[7]=t; break;
+        default:
+            fprintf(stderr, "ERROR: endian swap for wordsize %d not implemented!\n", wordsize);
+            exit(1);
+        }
+        p += wordsize;
+    }
+}
+
+/* ------------------------------------------------------------------------ */
+
 static void usage(char *name) {
     fprintf(stderr,
             "%s: usage: %s algorithm length > filename\n"
@@ -77,8 +109,17 @@ static void usage(char *name) {
     fprintf(stderr, "\n");
 }
 
+/* ------------------------------------------------------------------------ */
+
 int main(int argc, char **argv) {
     int cycles;
+    long long int total = 0;
+    volatile int test = 1;
+    bool big_endian = false;
+
+    big_endian = *((char *)&test) != 1;
+
+    fprintf(stderr, "%s: host is %s endian\n", argv[0], big_endian ? "big" : "little");
 
     if (argc != 3) {
         usage(argv[0]);
@@ -124,6 +165,7 @@ int main(int argc, char **argv) {
         break;
     case 2: {
         uint16_t seed[] = { 0xd33e, 0x607e, 0x834a, 0x517a };
+        if (big_endian) swap_endian(seed, 2, 4);
         memcpy(memory+0x8000, seed, 8);
         m6502_set_a(&cpu, 0x00);
         m6502_set_x(&cpu, 0x80);
@@ -142,6 +184,7 @@ int main(int argc, char **argv) {
         cycles = cpu_jsr(0x0200+algo*8+4);
         if (cycles >= SPEED_SIZE) cycles = SPEED_SIZE-1;
         speed[cycles] = 1;
+        total += cycles;
         putc(m6502_a(&cpu), stdout);
     }
 
@@ -149,4 +192,6 @@ int main(int argc, char **argv) {
         if (speed[i])
             fprintf(stderr, "%s: a call to random took %d cycles\n", argv[0], i-1);
     }
+
+    fprintf(stderr, "%s: average: %d cycles\n", argv[0], (int)(total/length));
 }
