@@ -9,7 +9,7 @@ all: emu_test
 emu_test: emu_test.c MCS6502.c MCS6502.h emu_test.img emu_test.s
 	$(CC) $(CFLAGS) $(LDFLAGS) -o emu_test emu_test.c MCS6502.c $(LIBS)
 
-emu_test.img: emu_test.s
+emu_test.img: emu_test.s random.s
 	$(MADS) -o:emu_test.img emu_test.s
 
 atari: atari_test1.xex atari_test2.xex

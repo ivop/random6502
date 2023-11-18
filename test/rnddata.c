@@ -272,7 +272,7 @@ static void random_arbee_seed(struct random_arbee_ctx *ctx, uint64_t *seed) {
 /* ---------------------------------------------------------------------- */
 
 struct random_arbee8_ctx {
-    uint8_t a, b, c, d, i, j, k, l;
+    uint8_t a, b, c, d, i;
 };
 
 //      e = a - ror(b,x)
@@ -298,28 +298,16 @@ struct random_arbee8_ctx {
 // arbee adds counter: c = d+e+i
 // 8-bit counter suspicious at 16GB (FPF-14+6/16:all)
 //               fails at 32Gb (FPF-14+6/16:all)
-// 2x 8-bit counter?
-// 4x 8-bit counter?
-// 4x 8-bit counter and spread over a..d ?
 
 static uint8_t random_arbee8(struct random_arbee8_ctx *ctx) {
     // if we use two LUTs, the rotates are lookups (512 bytes)
     // page align LUTs to avoid page crossing (+1 cycle per lookup)
-    // no LUTs, ror 1 is easy, ror 3 is tricky with the high bit, perhaps rol 5?
     uint8_t e = ctx->a - ((ctx->b << 7) | (ctx->b >> 1));
-    ctx->a = (ctx->b ^ ((ctx->c << 5) | (ctx->c >> 3))) + ctx->k;
-    ctx->b = ctx->c + ctx->d + ctx->l;      // two CLCs
+    ctx->a = (ctx->b ^ ((ctx->c << 5) | (ctx->c >> 3)));
+    ctx->b = ctx->c + ctx->d;
     ctx->c = ctx->d + e + ctx->i;           // two CLCs
-    ctx->d = e + ctx->a + ctx->j;           // two CLCs
-    ctx->i++;                               // inc32 i
-    if (!ctx->i) {
-        ctx->j++;
-        if (!ctx->j) {
-            ctx->k++;
-            if (!ctx->k)
-                ctx->l++;
-        }
-    }
+    ctx->d = e + ctx->a;
+    ctx->i++;
     return ctx->d;
 };
 
@@ -329,7 +317,6 @@ static void random_arbee8_seed(struct random_arbee8_ctx *ctx, uint32_t seed) {
     ctx->c = (seed >> 16) & 0xff;
     ctx->d = (seed >> 24) & 0xff;
     ctx->i = 1;
-    ctx->j = ctx->k = ctx->l = 0;
     for (int i=0; i<20; i++) random_arbee8(ctx);
 };
 

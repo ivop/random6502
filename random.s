@@ -52,6 +52,15 @@ WHERE = *
 ZP_START = *
 
 .ifdef RANDOM_ENABLE_ARBEE
+a8 .ds 1
+b8 .ds 1
+c8 .ds 1
+d8 .ds 1
+e8 .ds 1
+i8 .ds 1
+.endif
+
+.ifdef RANDOM_ENABLE_ARBEE
 a64 .ds 8
 b64 .ds 8
 c64 .ds 8
@@ -597,4 +606,92 @@ mixcnt
 .endif
 
 ; -----------------------------------------------------------------------------
+; ***** ARBEE *****
+; -----------------------------------------------------------------------------
 
+.ifdef RANDOM_ENABLE_ARBEE8
+
+RANDOM_START_ARBEE8 = *
+
+.print 'arbee8: ', RANDOM_START_ARBEE8, '-', *-1, ' (', *-RANDOM_START_ARBEE8, ')'
+
+.proc random_arbee8
+    ; e = a - ror(b,1)
+    lda b8
+    lsr
+    bcc @+
+    ora #$80
+@
+    eor #$ff
+    clc
+    adc #1  ; -b
+    clc
+    adc a8  ; +a
+    sta e8
+
+    ; a = b ^ ror(c,3)
+    lda c8
+    .rept 3
+    lsr
+    bcc @+
+    ora #$80
+@
+    .endr
+    eor b8
+    sta a8
+
+    ; b = c + d
+    lda c8
+    clc
+    adc d8
+    sta b8
+
+    ; c = d + e + i
+    lda d8
+    clc
+    adc e8
+    clc
+    adc i8
+    sta c8
+
+    ; d = e + a
+    lda e8
+    clc
+    adc a8
+    sta d8
+
+    inc i8
+
+    lda d8
+    rts
+.endp
+
+.proc random_arbee8_seed
+    stx seedloc+1
+    sta seedloc
+
+    ldx #3
+@
+    lda seedloc: $1234,x
+    sta a8,x
+    dex
+    bpl @-
+
+    mva #1 i8
+
+    ldx #19
+@
+    stx savex
+
+    jsr random_arbee8
+
+    ldx savex: #0
+    dex
+    bpl @-
+
+    rts
+.endp
+
+.endif
+
+; -----------------------------------------------------------------------------

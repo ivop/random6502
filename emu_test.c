@@ -185,6 +185,14 @@ int main(int argc, char **argv) {
         cpu.x = SEED_LOCATION >> 8;
         break;
         }
+    case 8: {
+        uint32_t seed = 0xdeadbeef;
+        if (big_endian) swap_endian(&seed, 4, 1);
+        memcpy(memory+SEED_LOCATION, &seed, 4);
+        cpu.a = SEED_LOCATION & 0xff;
+        cpu.x = SEED_LOCATION >> 8;
+        break;
+        }
     default:
         fprintf(stderr, "%s: error: algorithm %d not implemented yet\n",
                                                             argv[0], algo);
