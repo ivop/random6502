@@ -9,7 +9,7 @@ Add *opt h-* to suppress Atari 8-bit headers, and output raw binary data.
 
 <table>
     <thead>
-        <tr>
+        <tr valign="bottom">
             <th rowspan=3>Generator</th>
             <th rowspan=3>Bits</th>
             <th rowspan=3>Size</th>
@@ -18,7 +18,7 @@ Add *opt h-* to suppress Atari 8-bit headers, and output raw binary data.
             <th rowspan=3>Quality</th>
             <th rowspan=3>Notes</th>
         </tr>
-        <tr>
+        <tr valign="top">
             <th rowspan=2>Seed</th>
             <th colspan=3>Generate</th>
         </tr>
@@ -29,83 +29,83 @@ Add *opt h-* to suppress Atari 8-bit headers, and output raw binary data.
         </tr>
     </thead>
     <tbody>
-        <tr>
+        <tr align="right">
             <td>single_eor</td>
             <td>8</td>
             <td>17</td>
             <td>1</td>
             <td>15</td>
             <td>23</td><td>28</td><td>27</td>
-            <td>:x:</td>
-            <td></td>
+            <td align="left">:x:</td>
+            <td align="left"></td>
         </tr>
-        <tr>
+        <tr align="right">
             <td>four_taps_eor</td>
             <td>8</td>
             <td>37</td>
             <td>1</td>
             <td>15</td>
             <td>56</td><td>60</td><td>58</td>
-            <td>:x:</td>
-            <td></td>
+            <td align="left">:x:</td>
+            <td align="left"></td>
         </tr>
-        <tr>
+        <tr align="right">
             <td>sfc16</td>
             <td>16</td>
-            <td>226👍</td>
+            <td><b>226</b></td>
             <td>12</td>
             <td>3292</td>
             <td>27</td><td>350</td><td>186</td>
-            <td>⭐⭐</td>
-            <td>smallest</td>
+            <td align="left">⭐⭐</td>
+            <td align="left">smallest</td>
         </tr>
-        <tr>
+        <tr align="right">
             <td>chacha20(8)</td>
             <td>32</td>
             <td>2559</td>
             <td>64</td>
             <td>708</td>
             <td>29</td><td>18775</td><td>321</td>
-            <td>⭐⭐⭐⭐⭐</td>
-            <td rowspan=3 >crypto, random access</td>
+            <td align="left">⭐⭐⭐⭐⭐</td>
+            <td rowspan=3  align="left">crypto, random access</td>
         </tr>
-        <tr>
+        <tr align="right">
             <td>chacha20(12)</td>
             <td>32</td>
             <td>2559</td>
             <td>64</td>
             <td>708</td>
             <td>29</td><td>27662</td><td>459</td>
-            <td>:star::star::star::star::star:</td>
+            <td align="left">:star::star::star::star::star:</td>
         </tr>
-        <tr>
+        <tr align="right">
             <td>chacha20(20)</td>
             <td>32</td>
             <td>2559</td>
             <td>64</td>
             <td>708</td>
             <td>29</td><td>45352</td><td>736</td>
-            <td>⭐⭐⭐⭐⭐</td>
+            <td align="left">⭐⭐⭐⭐⭐</td>
         </tr>
-        <tr>
+        <tr align="right">
             <td>jsf32</td>
             <td>32</td>
             <td>355</td>
             <td>24</td>
             <td>8020</td>
-            <td>29</td><td>310</td><td>124👍</td>
-            <td>⭐⭐⭐</td>
-            <td>fastest</td>
+            <td>29</td><td>310</td><td><b>124</b></td>
+            <td align="left">⭐⭐⭐</td>
+            <td align="left">fastest</td>
         </tr>
-        <tr>
+        <tr align="right">
             <td>arbee</td>
             <td>64</td>
             <td>600</td>
             <td>56</td>
             <td>14151</td>
             <td>29</td><td>1198</td><td>171</td>
-            <td>⭐⭐⭐⭐</td>
-            <td>entropy pooling</td>
+            <td align="left">⭐⭐⭐⭐</td>
+            <td align="left">entropy pooling</td>
         </tr>
     </tbody>
 </table>
