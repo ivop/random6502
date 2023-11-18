@@ -28,7 +28,9 @@ static m6502_t cpu;
 static uint64_t pins;
 static uint8_t memory[65536];
 
-#define SPEED_SIZE 20000
+#define SEED_LOCATION 0xf000
+
+#define SPEED_SIZE 100000
 static uint8_t speed[SPEED_SIZE];
 
 /* ------------------------------------------------------------------------ */
@@ -49,6 +51,7 @@ static void memory_write(uint16_t addr, uint8_t value) {
 
 static int cpu_jsr(uint16_t newpc) {
     int cycles = 0;
+    uint16_t addr = 0;
 
     pins = M6502_SYNC;
     M6502_SET_ADDR(pins, newpc);
@@ -60,7 +63,7 @@ static int cpu_jsr(uint16_t newpc) {
         pins = m6502_tick(&cpu, pins);
         cycles++;
 
-        const uint16_t addr = M6502_GET_ADDR(pins);
+        addr = M6502_GET_ADDR(pins);
 
         if (pins & M6502_RW) {
             M6502_SET_DATA(pins, memory_read(addr));
@@ -68,7 +71,7 @@ static int cpu_jsr(uint16_t newpc) {
             memory_write(addr, M6502_GET_DATA(pins));
         }
 
-        if (memory[m6502_pc(&cpu)] == 0x00) run = 1; // one cycle to complete
+        if (memory[m6502_pc(&cpu)] == 0xea) run = 1; // one cycle to complete
                                                      // possible pending write
     }
 
@@ -112,7 +115,7 @@ static void usage(char *name) {
 /* ------------------------------------------------------------------------ */
 
 int main(int argc, char **argv) {
-    int cycles;
+    int cycles, mincycles = INT_MAX, maxcycles = 0;
     long long int total = 0;
     volatile int test = 1;
     bool big_endian = false;
@@ -158,17 +161,46 @@ int main(int argc, char **argv) {
 
     switch (algo) {
     case 0:
-        m6502_set_a(&cpu, 0xff);
-        break;
     case 1:
         m6502_set_a(&cpu, 0xff);
         break;
     case 2: {
         uint16_t seed[] = { 0xd33e, 0x607e, 0x834a, 0x517a };
         if (big_endian) swap_endian(seed, 2, 4);
-        memcpy(memory+0x8000, seed, 8);
-        m6502_set_a(&cpu, 0x00);
-        m6502_set_x(&cpu, 0x80);
+        memcpy(memory+SEED_LOCATION, seed, 4*2);
+        m6502_set_a(&cpu, SEED_LOCATION & 0xff);
+        m6502_set_x(&cpu, SEED_LOCATION >> 8);
+        break;
+        }
+    case 3:
+    case 4:
+    case 5: {
+        uint32_t seed[] = {
+            0x93ba769e, 0xcf1f833e, 0x06921c46, 0xf57871ac,
+            0x363eca41, 0x766a5537, 0x04e7a5dc, 0xe385505b,
+            0, 0,
+            0x81a3749a, 0x7410533d
+        };
+        if (big_endian) swap_endian(seed, 4, 12);
+        memcpy(memory+SEED_LOCATION, seed, 12*4);
+        m6502_set_a(&cpu, SEED_LOCATION & 0xff);
+        m6502_set_x(&cpu, SEED_LOCATION >> 8);
+        break;
+        }
+    case 6: {
+        uint64_t seed = 0xdeadbeefb01dface;
+        if (big_endian) swap_endian(&seed, 8, 1);
+        memcpy(memory+SEED_LOCATION, &seed, 8);
+        m6502_set_a(&cpu, SEED_LOCATION & 0xff);
+        m6502_set_x(&cpu, SEED_LOCATION >> 8);
+        break;
+        }
+    case 7: {
+        uint64_t seed[] = { 1, 1, 1, 1 };
+        if (big_endian) swap_endian(seed, 8, 4);
+        memcpy(memory+SEED_LOCATION, &seed, 8*4);
+        m6502_set_a(&cpu, SEED_LOCATION & 0xff);
+        m6502_set_x(&cpu, SEED_LOCATION >> 8);
         break;
         }
     default:
@@ -189,9 +221,14 @@ int main(int argc, char **argv) {
     }
 
     for (int i=0; i<SPEED_SIZE; i++) {
-        if (speed[i])
-            fprintf(stderr, "%s: a call to random took %d cycles\n", argv[0], i-1);
+        if (speed[i]) {
+//            fprintf(stderr, "%s: a call to random took %d cycles\n", argv[0], i);
+            if (i<mincycles) mincycles = i;
+            if (i>maxcycles) maxcycles = i;
+        }
     }
 
+    fprintf(stderr, "%s: min: %d cycles\n", argv[0], mincycles);
+    fprintf(stderr, "%s: max: %d cycles\n", argv[0], maxcycles);
     fprintf(stderr, "%s: average: %d cycles\n", argv[0], (int)(total/length));
 }

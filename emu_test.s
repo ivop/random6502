@@ -5,57 +5,57 @@
 
 table
     jsr random_single_eor_seed
-    brk
+    nop
     jsr random_single_eor
-    brk
+    nop
 
     jsr random_four_taps_eor_seed
-    brk
+    nop
     jsr random_four_taps_eor
-    brk
+    nop
 
     jsr random_sfc16_seed
-    brk
+    nop
     jsr random_sfc16
-    brk
+    nop
 
     jsr wrapper_random_chacha20_8_seed
-    brk
+    nop
     jsr random_chacha20
-    brk
+    nop
 
     jsr wrapper_random_chacha20_12_seed
-    brk
+    nop
     jsr random_chacha20
-    brk
+    nop
 
     jsr wrapper_random_chacha20_20_seed
-    brk
+    nop
     jsr random_chacha20
-    brk
+    nop
 
     jsr random_jsf32_seed
-    brk
+    nop
     jsr random_jsf32
-    brk
+    nop
 
     jsr random_arbee_seed
-    brk
+    nop
     jsr random_arbee
-    brk
+    nop
 
 .proc wrapper_random_chacha20_8_seed
-    mvy #8 random_chacha20_core.rounds
+    mvy #8/2 random_chacha20_core.rounds
     jmp random_chacha20_seed
 .endp
 
 .proc wrapper_random_chacha20_12_seed
-    mvy #12 random_chacha20_core.rounds
+    mvy #12/2 random_chacha20_core.rounds
     jmp random_chacha20_seed
 .endp
 
 .proc wrapper_random_chacha20_20_seed
-    mvy #20 random_chacha20_core.rounds
+    mvy #20/2 random_chacha20_core.rounds
     jmp random_chacha20_seed
 .endp
 
