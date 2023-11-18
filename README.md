@@ -56,7 +56,7 @@ Add *opt h-* to suppress Atari 8-bit headers, and output raw binary data.
             <td>12</td>
             <td>3292</td>
             <td>27</td><td>350</td><td>186</td>
-            <td>:star: :star:</td>
+            <td>:star::star:</td>
             <td>smallest</td>
         </tr>
         <tr>
@@ -66,7 +66,7 @@ Add *opt h-* to suppress Atari 8-bit headers, and output raw binary data.
             <td>64</td>
             <td>708</td>
             <td>29</td><td>18775</td><td>321</td>
-            <td>:star: :star: :star: :star: :star:</td>
+            <td>:star::star::star::star::star:</td>
             <td rowspan=3 >crypto, random access</td>
         </tr>
         <tr>
@@ -76,7 +76,7 @@ Add *opt h-* to suppress Atari 8-bit headers, and output raw binary data.
             <td>64</td>
             <td>708</td>
             <td>29</td><td>27662</td><td>459</td>
-            <td>:star: :star: :star: :star: :star:</td>
+            <td>:star::star::star::star::star:</td>
         </tr>
         <tr>
             <td>chacha20(20)</td>
@@ -85,7 +85,7 @@ Add *opt h-* to suppress Atari 8-bit headers, and output raw binary data.
             <td>64</td>
             <td>708</td>
             <td>29</td><td>45352</td><td>736</td>
-            <td>:star: :star: :star: :star: :star:</td>
+            <td>:star::star::star::star::star:</td>
         </tr>
         <tr>
             <td>jsf32</td>
@@ -94,7 +94,7 @@ Add *opt h-* to suppress Atari 8-bit headers, and output raw binary data.
             <td>24</td>
             <td>8020</td>
             <td>29</td><td>310</td><td>124 :thumbsup:</td>
-            <td>:star: :star: :star:</td>
+            <td>:star::star::star:</td>
             <td>fastest</td>
         </tr>
         <tr>
@@ -104,7 +104,7 @@ Add *opt h-* to suppress Atari 8-bit headers, and output raw binary data.
             <td>56</td>
             <td>14151</td>
             <td>29</td><td>1198</td><td>171</td>
-            <td>:star: :star: :star: :star:</td>
+            <td>:star::star::star::star:</td>
             <td>entropy pooling</td>
         </tr>
     </tbody>
