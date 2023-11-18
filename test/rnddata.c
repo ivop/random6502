@@ -15,7 +15,8 @@ static char *algorithms[] = {
     "chacha20(12)",
     "chacha20(20)",
     "jsf32",
-    "arbee"
+    "arbee",
+    "arbee8"
 };
 
 static const int nalgorithms = sizeof(algorithms)/sizeof(char*);
@@ -270,6 +271,70 @@ static void random_arbee_seed(struct random_arbee_ctx *ctx, uint64_t *seed) {
 
 /* ---------------------------------------------------------------------- */
 
+struct random_arbee8_ctx {
+    uint8_t a, b, c, d, i, j, k, l;
+};
+
+//      e = a - ror(b,x)
+//      a = b ^ ror(c,y)
+//      b = c + d
+//      c = d + e
+//      d = e + a
+//
+// jsf64:
+//      x=25, y=53      -->         64/4+9, 64/2+21 ???
+// jsf32:
+//      x=5, y=15       -->         32/4-(32/8-1), 32/2-1
+//      x=5, y=15       -->         32/4-3, 32/2-1
+// jsf16:
+//      x=3, y=7        -->         16/4-(16/8-1), 16/2-1)
+//      x=3, y=7        -->         16/4-1, 16/2-1)
+//
+// jsfX                 -->         X/4-(X/8)-1, X/2-1
+//
+// jsf8:
+//      8/4-1, 8/2-1    -->         x=1, y=3
+//
+// arbee adds counter: c = d+e+i
+// 8-bit counter suspicious at 16GB (FPF-14+6/16:all)
+//               fails at 32Gb (FPF-14+6/16:all)
+// 2x 8-bit counter?
+// 4x 8-bit counter?
+// 4x 8-bit counter and spread over a..d ?
+
+static uint8_t random_arbee8(struct random_arbee8_ctx *ctx) {
+    // if we use two LUTs, the rotates are lookups (512 bytes)
+    // page align LUTs to avoid page crossing (+1 cycle per lookup)
+    // no LUTs, ror 1 is easy, ror 3 is tricky with the high bit, perhaps rol 5?
+    uint8_t e = ctx->a - ((ctx->b << 7) | (ctx->b >> 1));
+    ctx->a = (ctx->b ^ ((ctx->c << 5) | (ctx->c >> 3))) + ctx->k;
+    ctx->b = ctx->c + ctx->d + ctx->l;      // two CLCs
+    ctx->c = ctx->d + e + ctx->i;           // two CLCs
+    ctx->d = e + ctx->a + ctx->j;           // two CLCs
+    ctx->i++;                               // inc32 i
+    if (!ctx->i) {
+        ctx->j++;
+        if (!ctx->j) {
+            ctx->k++;
+            if (!ctx->k)
+                ctx->l++;
+        }
+    }
+    return ctx->d;
+};
+
+static void random_arbee8_seed(struct random_arbee8_ctx *ctx, uint32_t seed) {
+    ctx->a = (seed >>  0) & 0xff;
+    ctx->b = (seed >>  8) & 0xff;
+    ctx->c = (seed >> 16) & 0xff;
+    ctx->d = (seed >> 24) & 0xff;
+    ctx->i = 1;
+    ctx->j = ctx->k = ctx->l = 0;
+    for (int i=0; i<20; i++) random_arbee8(ctx);
+};
+
+/* ---------------------------------------------------------------------- */
+
 static void usage(char *name) {
     fprintf(stderr,
             "%s: usage: %s algorithm length > filename\n"
@@ -381,6 +446,12 @@ int main(int argc, char **argv) {
             return 1;
         }
         fnc = (uint8_t (*)(void *ctx)) &random_arbee;
+        break;
+        }
+    case 8: {
+        ctx = calloc(1, sizeof(struct random_arbee8_ctx));
+        random_arbee8_seed(ctx, 0xdeadbeef);
+        fnc = (uint8_t (*)(void *ctx)) &random_arbee8;
         break;
         }
     default:
