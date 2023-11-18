@@ -3,30 +3,46 @@
 
     org $0200
 
-jump_table
-    jmp random_single_eor_seed
-    jmp random_single_eor
+table
+    jsr random_single_eor_seed
+    brk
+    jsr random_single_eor
+    brk
 
-    jmp random_four_taps_eor_seed
-    jmp random_four_taps_eor
+    jsr random_four_taps_eor_seed
+    brk
+    jsr random_four_taps_eor
+    brk
 
-    jmp random_sfc16_seed
-    jmp random_sfc16
+    jsr random_sfc16_seed
+    brk
+    jsr random_sfc16
+    brk
 
-    jmp wrapper_random_chacha20_8_seed
-    jmp random_chacha20
+    jsr wrapper_random_chacha20_8_seed
+    brk
+    jsr random_chacha20
+    brk
 
-    jmp wrapper_random_chacha20_12_seed
-    jmp random_chacha20
+    jsr wrapper_random_chacha20_12_seed
+    brk
+    jsr random_chacha20
+    brk
 
-    jmp wrapper_random_chacha20_20_seed
-    jmp random_chacha20
+    jsr wrapper_random_chacha20_20_seed
+    brk
+    jsr random_chacha20
+    brk
 
-    jmp random_jsf32_seed
-    jmp random_jsf32
+    jsr random_jsf32_seed
+    brk
+    jsr random_jsf32
+    brk
 
-    jmp random_arbee_seed
-    jmp random_arbee
+    jsr random_arbee_seed
+    brk
+    jsr random_arbee
+    brk
 
 .proc wrapper_random_chacha20_8_seed
     mvy #8 random_chacha20_core.rounds

@@ -27,6 +27,8 @@
 .define RANDOM_ENABLE_ARBEE
 .endif
 
+RANDOM_ZERO_PAGE = $80
+
     icl 'random.s'
     icl 'cio.s'
 

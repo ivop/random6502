@@ -1,3 +1,5 @@
-random_test*.xex
+atari_test*.xex
+emu_test
+emu_test.img
 test.out
 *~
