@@ -10,17 +10,22 @@ Add *opt h-* to suppress Atari 8-bit headers, and output raw binary data.
 <table>
     <thead>
         <tr>
-            <th rowspan=2>Generator</th>
-            <th rowspan=2>Bits</th>
-            <th rowspan=2>Size</th>
-            <th rowspan=2>ZP</th>
-            <th colspan=2>Speed</th>
-            <th rowspan=2>Quality</th>
-            <th rowspan=2>Notes</th>
+            <th rowspan=3>Generator</th>
+            <th rowspan=3>Bits</th>
+            <th rowspan=3>Size</th>
+            <th rowspan=3>ZP</th>
+            <th colspan=4>Speed</th>
+            <th rowspan=3>Quality</th>
+            <th rowspan=3>Notes</th>
         </tr>
         <tr>
-            <th>Seed</th>
-            <th>Generate<br>(min/max/avg)</th>
+            <th rowspan=2>Seed</th>
+            <th colspan=3>Generate</th>
+        </tr>
+        <tr>
+            <th>Min</th>
+            <th>Max</th>
+            <th>Avg</th>
         </tr>
     </thead>
     <tbody>
@@ -30,7 +35,7 @@ Add *opt h-* to suppress Atari 8-bit headers, and output raw binary data.
             <td>17</td>
             <td>1</td>
             <td>15</td>
-            <td>23/28/27</td>
+            <td>23</td><td>28</td><td>27</td>
             <td>:x:</td>
             <td></td>
         </tr>
@@ -40,7 +45,7 @@ Add *opt h-* to suppress Atari 8-bit headers, and output raw binary data.
             <td>37</td>
             <td>1</td>
             <td>15</td>
-            <td>56/60/58</td>
+            <td>56</td><td>60</td><td>58</td>
             <td>:x:</td>
             <td></td>
         </tr>
@@ -50,7 +55,7 @@ Add *opt h-* to suppress Atari 8-bit headers, and output raw binary data.
             <td>226 :thumbsup:</td>
             <td>12</td>
             <td>3292</td>
-            <td>27/350/186</td>
+            <td>27</td><td>350</td><td>186</td>
             <td>:star: :star:</td>
             <td>smallest</td>
         </tr>
@@ -60,7 +65,7 @@ Add *opt h-* to suppress Atari 8-bit headers, and output raw binary data.
             <td>2559</td>
             <td>64</td>
             <td>708</td>
-            <td>29/18775/321</td>
+            <td>29</td><td>18775</td><td>321</td>
             <td>:star: :star: :star: :star: :star:</td>
             <td rowspan=3 >crypto, random access</td>
         </tr>
@@ -70,7 +75,7 @@ Add *opt h-* to suppress Atari 8-bit headers, and output raw binary data.
             <td>2559</td>
             <td>64</td>
             <td>708</td>
-            <td>29/27662/459</td>
+            <td>29</td><td>27662</td><td>459</td>
             <td>:star: :star: :star: :star: :star:</td>
         </tr>
         <tr>
@@ -79,7 +84,7 @@ Add *opt h-* to suppress Atari 8-bit headers, and output raw binary data.
             <td>2559</td>
             <td>64</td>
             <td>708</td>
-            <td>29/45352/736</td>
+            <td>29</td><td>45352</td><td>736</td>
             <td>:star: :star: :star: :star: :star:</td>
         </tr>
         <tr>
@@ -88,7 +93,7 @@ Add *opt h-* to suppress Atari 8-bit headers, and output raw binary data.
             <td>355</td>
             <td>24</td>
             <td>8020</td>
-            <td>29/310/124 :thumbsup:</td>
+            <td>29</td><td>310</td><td>124 :thumbsup:</td>
             <td>:star: :star: :star:</td>
             <td>fastest</td>
         </tr>
@@ -98,7 +103,7 @@ Add *opt h-* to suppress Atari 8-bit headers, and output raw binary data.
             <td>600</td>
             <td>56</td>
             <td>14151</td>
-            <td>29/1198/171</td>
+            <td>29</td><td>1198</td><td>171</td>
             <td>:star: :star: :star: :star:</td>
             <td>entropy pooling</td>
         </tr>
@@ -123,7 +128,7 @@ Most of the time this is the internal state, sometimes combined with space for a
 
 ### Speed
 
-These times are in clock cycles.
+Times are in clock cycles.
 This includes the calling JSR instruction and the returning RTS instruction.
 
 ### Quality
@@ -154,3 +159,4 @@ All are public domain. See https://pracrand.sourceforge.net/
 single_eor is Copyright © by White Flame, https://codebase64.org/doku.php?id=base:small_fast_8-bit_prng  
 four_taps_eor is Copyright © 2002 by Lee E. Davison, https://philpem.me.uk/leeedavison/6502/prng/index.html  
 
+MCS6502 emulator is Copyright (c) 2019 by Ben Zotto, MIT License.
