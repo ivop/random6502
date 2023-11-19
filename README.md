@@ -91,10 +91,10 @@ See the generic emulation based test code that makes use of that.
         <tr align="right">
             <td>jsf32</td>
             <td>32</td>
-            <td>355</td>
-            <td>24</td>
-            <td>8020</td>
-            <td>29</td><td>310</td><td><b>124</b></td>
+            <td>337</td>
+            <td>20</td>
+            <td>7332</td>
+            <td>29</td><td>376</td><td><b>115</b></td>
             <td align="left">⭐⭐⭐</td>
             <td align="left">fastest</td>
         </tr>
