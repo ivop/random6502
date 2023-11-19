@@ -146,14 +146,15 @@ This includes the calling JSR instruction and the returning RTS instruction.
 
 **single_eor** and **four_taps_eor** are pretty bad. They fail every single test suite.
 
-**sfc17**, **chacha20**, **jsf32**, and **arbee** are all very good. The star rating is relative to eachother.
+**sfc16**, **sfc32**, **chacha20**, **jsf32**, and **arbee** are all very good. The star rating is relative to eachother.
 They all pass TestU01's Alphabit, Rabbit, FIPS 140-2, SmallCrush, Crush, and BigCrush.
 They also pass PractRand's RNG_test (>1TB, chacha20 >4TB), gjrand's mcp, and the old dieharder test suite.
 See https://pracrand.sourceforge.net/RNG_engines.txt for a detailed description and analysis, and
 https://pracrand.sourceforge.net/Tests_results.txt for test results.
 
-In short, **chacha20** is the best of the generators in this repo, then **arbee** (which basically is jsf64 with a counter), then **jsf32**, and finally **sfc16**.
+In short, **chacha20** is the best of the generators in this repo, then **arbee** (which basically is jsf64 with a counter), then **jsf32** and **sfc32**, and finally **sfc16**.
 In terms of speed, ignoring the bad PRNGs, **jsf32** is the fastest. In terms of code size and ZP usage, **sfc16** wins.
+**sfc32** is a compromise between the two.
 
 ### Perspective
 
