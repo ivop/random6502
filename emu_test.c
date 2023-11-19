@@ -5,6 +5,12 @@
 #include <string.h>
 #include "MCS6502.h"
 
+#ifdef __GNUC__
+#define UNUSED __attribute__((unused))
+#else
+#define UNUSED
+#endif
+
 struct _MCS6502ExecutionContext cpu;
 
 /* ------------------------------------------------------------------------ */
@@ -34,7 +40,7 @@ static uint8_t speed[SPEED_SIZE];
 
 /* ------------------------------------------------------------------------ */
 
-static uint8_t memory_read(uint16_t addr, void *ctx) {
+static uint8_t memory_read(uint16_t addr, void *ctx UNUSED) {
     if (addr == 0xdd0d)
         memory[addr] = 0;
     return memory[addr];
@@ -42,7 +48,7 @@ static uint8_t memory_read(uint16_t addr, void *ctx) {
 
 /* ------------------------------------------------------------------------ */
 
-static void memory_write(uint16_t addr, uint8_t value, void *ctx) {
+static void memory_write(uint16_t addr, uint8_t value, void *ctx UNUSED) {
     memory[addr] = value;
 }
 
