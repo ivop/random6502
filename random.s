@@ -81,8 +81,6 @@ xa .ds 2
 xb .ds 2
 xc .ds 2
 sfc16_counter .ds 2
-xb_rshift
-xc_lshift .ds 2
 tmp .ds 2
 .endif
 
@@ -217,37 +215,37 @@ calculate_new
     ; a = b ^ (b >> 5)
     lda xb+1
     lsr
-    sta xb_rshift+1
+    sta xa+1
     lda xb
     ror
     .rept 4
-    lsr xb_rshift+1
+    lsr xa+1
     ror
     .endr
     eor xb
     sta xa
-    lda xb_rshift+1
+    lda xa+1
     eor xb+1
     sta xa+1
 
     ; b = c + (c << 3)
     lda xc
-    sta xc_lshift
+    sta xb
     lda xc+1
 
     .rept 3
-    asl xc_lshift
+    asl xb
     rol
     .endr
 
-    sta xc_lshift+1
+    sta xb+1
 
     lda xc
     clc
-    adc xc_lshift
+    adc xb
     sta xb
     lda xc+1
-    adc xc_lshift+1
+    adc xb+1
     sta xb+1
 
     ; c = ((c << 6) | (c >> (10))) + tmp

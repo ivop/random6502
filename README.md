@@ -54,7 +54,7 @@ See the generic emulation based test code that makes use of that.
             <td>sfc16</td>
             <td>16</td>
             <td><b>180</b></td>
-            <td>12</td>
+            <td>10</td>
             <td>2432</td>
             <td>27</td><td>243</td><td>132</td>
             <td align="left">⭐⭐</td>
