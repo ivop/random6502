@@ -1,0 +1,142 @@
+struct random_arbee8_ctx {
+    uint8_t a, b, c, d, i;
+};
+
+//      e = a - ror(b,x)
+//      a = b ^ ror(c,y)
+//      b = c + d
+//      c = d + e
+//      d = e + a
+//
+// jsf64:
+//      x=25, y=53      -->         64/4+9, 64/2+21 ???
+// jsf32:
+//      x=5, y=15       -->         32/4-(32/8-1), 32/2-1
+//      x=5, y=15       -->         32/4-3, 32/2-1
+// jsf16:
+//      x=3, y=7        -->         16/4-(16/8-1), 16/2-1)
+//      x=3, y=7        -->         16/4-1, 16/2-1)
+//
+// jsfX                 -->         X/4-(X/8)-1, X/2-1
+//
+// jsf8:
+//      8/4-1, 8/2-1    -->         x=1, y=3
+//
+// arbee adds counter: c = d+e+i
+// 8-bit counter suspicious at 16GB (FPF-14+6/16:all)
+//               fails at 32Gb (FPF-14+6/16:all)
+// 32-bit counter added bytewise to all terms (a,b,c,d) no fail upto 2TB
+// but kind of fails the point of being smaller and faster
+// I underestimated the speed byte-per-byte speed increase of 32-bit buffered
+// generators
+
+static uint8_t random_arbee8(struct random_arbee8_ctx *ctx) {
+    // if we use two LUTs, the rotates are lookups (512 bytes)
+    // page align LUTs to avoid page crossing (+1 cycle per lookup)
+    uint8_t e = ctx->a - ((ctx->b << 7) | (ctx->b >> 1));
+    ctx->a = (ctx->b ^ ((ctx->c << 5) | (ctx->c >> 3)));
+    ctx->b = ctx->c + ctx->d;
+    ctx->c = ctx->d + e + ctx->i;           // two CLCs
+    ctx->d = e + ctx->a;
+    ctx->i++;
+    return ctx->d;
+};
+
+static void random_arbee8_seed(struct random_arbee8_ctx *ctx, uint32_t seed) {
+    ctx->a = (seed >>  0) & 0xff;
+    ctx->b = (seed >>  8) & 0xff;
+    ctx->c = (seed >> 16) & 0xff;
+    ctx->d = (seed >> 24) & 0xff;
+    ctx->i = 1;
+    for (int i=0; i<20; i++) random_arbee8(ctx);
+};
+
+
+#if 0
+
+.ifdef RANDOM_ENABLE_ARBEE8
+
+RANDOM_START_ARBEE8 = *
+
+.print 'arbee8: ', RANDOM_START_ARBEE8, '-', *-1, ' (', *-RANDOM_START_ARBEE8, ')'
+
+.proc random_arbee8
+    ; e = a - ror(b,1)
+    lda b8
+    lsr
+    bcc @+
+    ora #$80
+@
+    eor #$ff
+    clc
+    adc #1  ; -b
+    clc
+    adc a8  ; +a
+    sta e8
+
+    ; a = b ^ ror(c,3)
+    lda c8
+    .rept 3
+    lsr
+    bcc @+
+    ora #$80
+@
+    .endr
+    eor b8
+    sta a8
+
+    ; b = c + d
+    lda c8
+    clc
+    adc d8
+    sta b8
+
+    ; c = d + e + i
+    lda d8
+    clc
+    adc e8
+    clc
+    adc i8
+    sta c8
+
+    ; d = e + a
+    lda e8
+    clc
+    adc a8
+    sta d8
+
+    inc i8
+
+    lda d8
+    rts
+.endp
+
+.proc random_arbee8_seed
+    stx seedloc+1
+    sta seedloc
+
+    ldx #3
+@
+    lda seedloc: $1234,x
+    sta a8,x
+    dex
+    bpl @-
+
+    mva #1 i8
+
+    ldx #19
+@
+    stx savex
+
+    jsr random_arbee8
+
+    ldx savex: #0
+    dex
+    bpl @-
+
+    rts
+.endp
+
+.endif
+
+#endif
