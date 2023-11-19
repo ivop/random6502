@@ -297,13 +297,13 @@ static uint8_t random_sfc32(struct random_sfc32_ctx *ctx) {
     return (ctx->tmp & (0xff << (s*8))) >> (s*8);
 };
 
-static void random_sfc32_seed(struct random_sfc32_ctx *ctx, uint64_t seed) {
-    ctx->a = 0;
-    ctx->b = seed;
-    ctx->c = seed >> 32;
+static void random_sfc32_seed(struct random_sfc32_ctx *ctx, uint32_t *seed) {
+    ctx->a = seed[0];
+    ctx->b = seed[1];
+    ctx->c = seed[2];
     ctx->counter = 1;
     ctx->pos = -1;
-    for (int i=0; i<12; i++) random_sfc32_core(ctx);
+    for (int i=0; i<15; i++) random_sfc32_core(ctx);
 };
 
 /* ---------------------------------------------------------------------- */
@@ -423,7 +423,8 @@ int main(int argc, char **argv) {
         }
     case 8: {
         ctx = calloc(1, sizeof(struct random_sfc32_ctx));
-        random_sfc32_seed(ctx, 0xdeadbeefb01dface);
+        uint32_t seed[] = { 0xdeadbeef, 0xb01dface, 0xc0ffee13 };
+        random_sfc32_seed(ctx, seed);
         fnc = (uint8_t (*)(void *ctx)) &random_sfc32;
         break;
         }
