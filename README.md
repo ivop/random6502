@@ -68,7 +68,7 @@ See the generic emulation based test code that makes use of that.
             <td>5860</td>
             <td>29</td><td>405</td><td>122</td>
             <td align="left">⭐⭐⭐</td>
-            <td align="left">smallest</td>
+            <td align="left"></td>
         </tr>
         <tr align="right">
             <td>chacha20(8)</td>
