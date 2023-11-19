@@ -73,29 +73,29 @@ See the generic emulation based test code that makes use of that.
         <tr align="right">
             <td>chacha20(8)</td>
             <td>32</td>
-            <td>2573</td>
+            <td>2101</td>
             <td>64</td>
             <td>708</td>
-            <td>29</td><td>18696</td><td>320</td>
+            <td>29</td><td>15945</td><td>277</td>
             <td align="left">⭐⭐⭐⭐⭐</td>
             <td rowspan=3  align="left">crypto, random access</td>
         </tr>
         <tr align="right">
             <td>chacha20(12)</td>
             <td>32</td>
-            <td>2573</td>
+            <td>2101</td>
             <td>64</td>
             <td>708</td>
-            <td>29</td><td>27577</td><td>458</td>
+            <td>29</td><td>23450</td><td>393</td>
             <td align="left">:star::star::star::star::star:</td>
         </tr>
         <tr align="right">
             <td>chacha20(20)</td>
             <td>32</td>
-            <td>2573</td>
+            <td>2101</td>
             <td>64</td>
             <td>708</td>
-            <td>29</td><td>45255</td><td>734</td>
+            <td>29</td><td>38376</td><td>627</td>
             <td align="left">⭐⭐⭐⭐⭐</td>
         </tr>
         <tr align="right">

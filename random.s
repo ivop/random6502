@@ -292,16 +292,15 @@ RANDOM_START_CHACHA20 = *
 
 .macro STEP one two three times
     add32 :one :two :one
-    xor32 :three :one :three
 .if :times=16
-    rol32_16 :three
+    xo32rol32_16 :three :one
 .elseif :times=8
-    rol32_8 :three
+    xor32rol32_8 :three :one
 .elseif :times=12
-    rol32_8 :three
+    xor32rol32_8 :three :one
     rol32 :three 4
 .elseif :times=7
-    rol32_8 :three
+    xor32rol32_8 :three :one
     ror32_1 :three
 .else
     rol32 :three :times

@@ -71,6 +71,25 @@ noC
     stx :loc+3
 .endm
 
+.macro xo32rol32_16 loc xorloc
+    lda :loc
+    eor :xorloc
+    tax
+    lda :loc+1
+    eor :xorloc+1
+    tay
+
+    lda :loc+2
+    eor :xorloc+2
+    sta :loc
+    lda :loc+3
+    eor :xorloc+3
+    sta :loc+1
+
+    stx :loc+2
+    sty :loc+3
+.endm
+
 .macro rol32_8 loc
     ldx :loc+3
 
@@ -79,6 +98,24 @@ noC
     mva :loc+0 :loc+1
 
     stx :loc+0
+.endm
+
+.macro xor32rol32_8 loc xorloc
+    lda :loc+3
+    eor :xorloc+3
+    tax
+
+    lda :loc+2
+    eor :xorloc+2
+    sta :loc+3
+    lda :loc+1
+    eor :xorloc+1
+    sta :loc+2
+    lda :loc
+    eor :xorloc
+    sta :loc+1
+
+    stx :loc
 .endm
 
 .macro sub32 srcloc subloc dstloc
