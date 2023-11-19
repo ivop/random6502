@@ -609,9 +609,9 @@ RANDOM_START_SFC32 = *
     add32 t32 sfc32_counter t32
     inc32 sfc32_counter
 
-    ; x = y ^ (y>>9)
+    ; x = y ^ (y>>8)
     mov32 y32 x32
-    lsr32 x32 9
+    lsr32_8 x32
     xor32 x32 y32 x32
 
     ; y = z + (z<<3)
@@ -619,8 +619,9 @@ RANDOM_START_SFC32 = *
     asl32 y32 3
     add32 y32 z32 y32
 
-    ; z = rol32(z,21) + tmp
-    rol32 z32 21
+    ; z = rol32(z,15) + tmp
+    rol32_16 z32
+    ror32_1 z32
     add32 z32 t32 z32
 
     rts

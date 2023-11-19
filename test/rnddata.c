@@ -281,9 +281,9 @@ struct random_sfc32_ctx {
 //      rshift32(b,8) is byte shuffling, remains lshift32(c,3)
 static void random_sfc32_core(struct random_sfc32_ctx *ctx) {
     ctx->tmp = ctx->a + ctx->b + ctx->counter++;
-    ctx->a = ctx->b ^ (ctx->b >> 9);
+    ctx->a = ctx->b ^ (ctx->b >> 8);
     ctx->b = ctx->c + (ctx->c << 3);
-    ctx->c = ROL32(ctx->c,21) + ctx->tmp;
+    ctx->c = ROL32(ctx->c,15) + ctx->tmp;
 };
 
 static uint8_t random_sfc32(struct random_sfc32_ctx *ctx) {

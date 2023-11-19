@@ -223,6 +223,17 @@ noC
     .endr
 .endm
 
+.macro lsr32_8 loc
+    lda :loc+1
+    sta :loc
+    lda :loc+2
+    sta :loc+1
+    lda :loc+3
+    sta :loc+2
+    lda #0
+    sta :loc+3
+.endm
+
 .macro asl32 loc times
     .rept :times
     asl :loc
