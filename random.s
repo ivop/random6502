@@ -395,11 +395,8 @@ RANDOM_START_JSF32 = *
     rol32 e32 3
     sub32 a32 e32 e32
 
-    ; f = rol32(c,17)
-    movrol32_17 c32 f32
-
-    ; a = b ^ f
-    xor32 b32 f32 a32
+    ; a = b ^ rol32(c,17)
+    movrol32_17_xor c32 b32 a32
 
     ; b = c + d
     add32 c32 d32 b32

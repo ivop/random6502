@@ -167,6 +167,34 @@ noC
 noC
 .endm
 
+.macro movrol32_17_xor src xorloc dst
+    lda :src+0
+    asl
+    sta :dst+2
+
+    lda :src+1
+    rol
+    eor :xorloc+3
+    sta :dst+3
+
+    lda :src+2
+    rol
+    eor :xorloc+0
+    sta :dst+0
+
+    lda :src+3
+    rol
+    eor :xorloc+1
+    sta :dst+1
+
+    lda :dst+2
+    bcc noC
+    ora #1
+noC
+    eor :xorloc+2
+    sta :dst+2
+.endm
+
 ; -----------------------------------------------------------------------------
 ; ***** 64-BIT MATH *****
 ; -----------------------------------------------------------------------------
