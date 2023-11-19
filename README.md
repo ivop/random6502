@@ -61,6 +61,16 @@ See the generic emulation based test code that makes use of that.
             <td align="left">smallest</td>
         </tr>
         <tr align="right">
+            <td>sfc32</td>
+            <td>32</td>
+            <td>290></td>
+            <td>20</td>
+            <td><5860/td>
+            <td>29</td><td>405</td><td>122</td>
+            <td align="left">⭐⭐⭐</td>
+            <td align="left">smallest</td>
+        </tr>
+        <tr align="right">
             <td>chacha20(8)</td>
             <td>32</td>
             <td>2559</td>
