@@ -55,7 +55,6 @@ b32 .ds 4
 c32 .ds 4
 d32 .ds 4
 e32 .ds 4
-f32 .ds 4
 .endif
 
 .ifdef RANDOM_ENABLE_CHACHA20
