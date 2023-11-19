@@ -63,7 +63,7 @@ See the generic emulation based test code that makes use of that.
         <tr align="right">
             <td>sfc32</td>
             <td>32</td>
-            <td>290></td>
+            <td>290</td>
             <td>20</td>
             <td>5860</td>
             <td>29</td><td>405</td><td>122</td>
