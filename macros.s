@@ -234,6 +234,21 @@ noC
     sta :loc+3
 .endm
 
+.macro movlsr32_8_xor src xorloc dst
+    lda :src+1
+    eor :xorloc
+    sta :dst
+    lda :src+2
+    eor :xorloc+1
+    sta :dst+1
+    lda :src+3
+    eor :xorloc+2
+    sta :dst+2
+    lda #0
+    eor :xorloc+3
+    sta :dst+3
+.endm
+
 .macro asl32 loc times
     .rept :times
     asl :loc

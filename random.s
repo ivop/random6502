@@ -610,9 +610,7 @@ RANDOM_START_SFC32 = *
     inc32 sfc32_counter
 
     ; x = y ^ (y>>8)
-    mov32 y32 x32
-    lsr32_8 x32
-    xor32 x32 y32 x32
+    movlsr32_8_xor y32 y32 x32
 
     ; y = z + (z<<3)
     mov32 z32 y32
