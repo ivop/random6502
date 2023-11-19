@@ -154,7 +154,6 @@ https://pracrand.sourceforge.net/Tests_results.txt for test results.
 
 In short, **chacha20** is the best of the generators in this repo, then **arbee** (which basically is jsf64 with a counter), then **jsf32** and **sfc32**, and finally **sfc16**.
 In terms of speed, ignoring the bad PRNGs, **jsf32** is the fastest. In terms of code size and ZP usage, **sfc16** wins.
-**sfc32** is a compromise between the two.
 
 ### Perspective
 
