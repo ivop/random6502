@@ -162,7 +162,7 @@ The 6502 was launched in September 1975. An unmodified Atari 8-bit with a 6502 c
 ### Credits
 
 6502 implementations of sfc16, chacha20, jsf32, and arbee are Copyright © 2023 by Ivo van Poorten.
-License us BSD-2-Clause.
+License is BSD-2-Clause.
 
 sfc16, chacha20, jsf32, and arbee based on C++ code Copyright © by Chris Doty-Humphrey.  
 jsf32's C++ code is mostly by Robert Jenkins.  
