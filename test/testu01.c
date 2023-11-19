@@ -32,8 +32,8 @@ int main (void) {
 //    bbattery_Rabbit(gen, 100*1024*1024.0);
 //    bbattery_FIPS_140_2(gen);
 //    bbattery_SmallCrush(gen);
-    bbattery_Crush(gen);
-//    bbattery_BigCrush(gen);
+//    bbattery_Crush(gen);
+    bbattery_BigCrush(gen);
 
     return 0;
 }

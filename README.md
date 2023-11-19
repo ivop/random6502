@@ -63,39 +63,39 @@ See the generic emulation based test code that makes use of that.
         <tr align="right">
             <td>sfc32</td>
             <td>32</td>
-            <td>290</td>
+            <td>296</td>
             <td>20</td>
-            <td>5860</td>
-            <td>29</td><td>405</td><td>122</td>
+            <td>5845</td>
+            <td>29</td><td>394</td><td>116</td>
             <td align="left">⭐⭐⭐</td>
             <td align="left"></td>
         </tr>
         <tr align="right">
             <td>chacha20(8)</td>
             <td>32</td>
-            <td>2559</td>
+            <td>2573</td>
             <td>64</td>
             <td>708</td>
-            <td>29</td><td>18775</td><td>321</td>
+            <td>29</td><td>18696</td><td>320</td>
             <td align="left">⭐⭐⭐⭐⭐</td>
             <td rowspan=3  align="left">crypto, random access</td>
         </tr>
         <tr align="right">
             <td>chacha20(12)</td>
             <td>32</td>
-            <td>2559</td>
+            <td>2573</td>
             <td>64</td>
             <td>708</td>
-            <td>29</td><td>27662</td><td>459</td>
+            <td>29</td><td>27577</td><td>458</td>
             <td align="left">:star::star::star::star::star:</td>
         </tr>
         <tr align="right">
             <td>chacha20(20)</td>
             <td>32</td>
-            <td>2559</td>
+            <td>2573</td>
             <td>64</td>
             <td>708</td>
-            <td>29</td><td>45352</td><td>736</td>
+            <td>29</td><td>45255</td><td>734</td>
             <td align="left">⭐⭐⭐⭐⭐</td>
         </tr>
         <tr align="right">
@@ -111,10 +111,10 @@ See the generic emulation based test code that makes use of that.
         <tr align="right">
             <td>arbee</td>
             <td>64</td>
-            <td>600</td>
+            <td>614</td>
             <td>56</td>
-            <td>14151</td>
-            <td>29</td><td>1198</td><td>171</td>
+            <td>13480</td>
+            <td>29</td><td>1143</td><td>164</td>
             <td align="left">⭐⭐⭐⭐</td>
             <td align="left">entropy pooling</td>
         </tr>

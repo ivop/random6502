@@ -201,10 +201,12 @@ noC
     adc #1
     sta :loc
     .rept 3
+    bcc early
     lda :loc+1+#
     adc #0
     sta :loc+1+#
     .endr
+early
 .endm
 
 .macro mov32 src dst
@@ -268,10 +270,12 @@ noC
     adc #1
     sta :loc
     .rept 7
+    bcc early
     lda :loc+1+#
     adc #0
     sta :loc+1+#
     .endr
+early
 .endm
 
 .macro mov64 src dst
