@@ -44,9 +44,9 @@ table
     jsr random_arbee
     nop
 
-    jsr random_arbee8_seed
+    jsr random_sfc32_seed
     nop
-    jsr random_arbee8
+    jsr random_sfc32
     nop
 
 .proc wrapper_random_chacha20_8_seed
@@ -70,7 +70,7 @@ table
 .define RANDOM_ENABLE_CHACHA20
 .define RANDOM_ENABLE_JSF32
 .define RANDOM_ENABLE_ARBEE
-.define RANDOM_ENABLE_ARBEE8
+.define RANDOM_ENABLE_SFC32
 
 RANDOM_ZERO_PAGE=0
 

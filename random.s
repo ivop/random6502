@@ -30,13 +30,12 @@ WHERE = *
 
 ZP_START = *
 
-.ifdef RANDOM_ENABLE_ARBEE
-a8 .ds 1
-b8 .ds 1
-c8 .ds 1
-d8 .ds 1
-e8 .ds 1
-i8 .ds 1
+.ifdef RANDOM_ENABLE_SFC32
+x32 .ds 4
+y32 .ds 4
+z32 .ds 4
+t32 .ds 4
+sfc32_counter .ds 4
 .endif
 
 .ifdef RANDOM_ENABLE_ARBEE
@@ -599,91 +598,73 @@ mixcnt
 .endif
 
 ; -----------------------------------------------------------------------------
-; ***** ARBEE *****
+; ***** SFC32 *****
 ; -----------------------------------------------------------------------------
 
-.ifdef RANDOM_ENABLE_ARBEE8
+.ifdef RANDOM_ENABLE_SFC32
 
-RANDOM_START_ARBEE8 = *
+RANDOM_START_SFC32 = *
 
-.print 'arbee8: ', RANDOM_START_ARBEE8, '-', *-1, ' (', *-RANDOM_START_ARBEE8, ')'
+.proc random_sfc32_core
+    ; tmp = x + y + counter++
+    ; x = y ^ (y>>9)
+    ; y = z + (z<<3)
+    ; z = rol32(z,21) + tmp
 
-.proc random_arbee8
-    ; e = a - ror(b,1)
-    lda b8
-    lsr
-    bcc @+
-    ora #$80
-@
-    eor #$ff
-    clc
-    adc #1  ; -b
-    clc
-    adc a8  ; +a
-    sta e8
-
-    ; a = b ^ ror(c,3)
-    lda c8
-    .rept 3
-    lsr
-    bcc @+
-    ora #$80
-@
-    .endr
-    eor b8
-    sta a8
-
-    ; b = c + d
-    lda c8
-    clc
-    adc d8
-    sta b8
-
-    ; c = d + e + i
-    lda d8
-    clc
-    adc e8
-    clc
-    adc i8
-    sta c8
-
-    ; d = e + a
-    lda e8
-    clc
-    adc a8
-    sta d8
-
-    inc i8
-
-    lda d8
     rts
 .endp
 
-.proc random_arbee8_seed
+.proc random_sfc32
+    ldy pos
+    bpl @+
+
+    jsr random_jsf32_core
+
+    ldy #3
+    sty pos
+@
+    lda d32,y
+    dec pos
+
+    rts
+
+pos
+    dta -1
+.endp
+
+.proc random_sfc32_seed
     stx seedloc+1
     sta seedloc
 
-    ldx #3
+    ldx #11
 @
     lda seedloc: $1234,x
-    sta a8,x
+    sta x32,x
     dex
     bpl @-
 
-    mva #1 i8
+    mva #1 sfc32_counter
+    lda #0
+    sta sfc32_counter+1
+    sta sfc32_counter+2
+    sta sfc32_counter+3
 
-    ldx #19
+    ldx #11
 @
     stx savex
 
-    jsr random_arbee8
+    jsr random_sfc32_core
 
     ldx savex: #0
     dex
     bpl @-
 
+    mva #$ff random_sfc32.pos
+
     rts
 .endp
+
+.print 'sfc32: ', RANDOM_START_SFC32, '-', *-1, ' (', *-RANDOM_START_SFC32, ')'
 
 .endif
 
