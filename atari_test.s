@@ -25,6 +25,7 @@
 .endif
 .ifdef TEST_BATCH2
 .define RANDOM_ENABLE_ARBEE
+.define RANDOM_ENABLE_SFC32
 .endif
 
 RANDOM_ZERO_PAGE = $80
@@ -196,6 +197,20 @@ fill
 
     jsr print_number
 
+; --------
+
+    printsn 0, "sfc32:         "
+
+    ldx #>sfc32_seed
+    lda #<sfc32_seed
+    jsr random_sfc32_seed
+
+    mwa #random_sfc32 test_prng.routine
+    mwa #$5000 ptr
+    jsr test_prng
+
+    jsr print_number
+
 .endif
 
     jmp *
@@ -298,6 +313,11 @@ arbee_seed
     .byte 1,0,0,0, 0,0,0,0
     .byte 1,0,0,0, 0,0,0,0
     .byte 1,0,0,0, 0,0,0,0
+
+; ----------------------------------------------------------------------------
+
+sfc32_seed
+    .dword 0xdeadbeef, 0xb01dface, 0xc0ffee13
 
 ; ----------------------------------------------------------------------------
 

@@ -605,9 +605,23 @@ RANDOM_START_SFC32 = *
 
 .proc random_sfc32_core
     ; tmp = x + y + counter++
+    add32 x32 y32 t32
+    add32 t32 sfc32_counter t32
+    inc32 sfc32_counter
+
     ; x = y ^ (y>>9)
+    mov32 y32 x32
+    lsr32 x32 9
+    xor32 x32 y32 x32
+
     ; y = z + (z<<3)
+    mov32 z32 y32
+    asl32 y32 3
+    add32 y32 z32 y32
+
     ; z = rol32(z,21) + tmp
+    rol32 z32 21
+    add32 z32 t32 z32
 
     rts
 .endp
@@ -616,12 +630,12 @@ RANDOM_START_SFC32 = *
     ldy pos
     bpl @+
 
-    jsr random_jsf32_core
+    jsr random_sfc32_core
 
     ldy #3
     sty pos
 @
-    lda d32,y
+    lda t32,y
     dec pos
 
     rts
@@ -647,7 +661,7 @@ pos
     sta sfc32_counter+2
     sta sfc32_counter+3
 
-    ldx #11
+    ldx #14
 @
     stx savex
 

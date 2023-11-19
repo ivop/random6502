@@ -195,6 +195,43 @@ noC
     sta :dst+2
 .endm
 
+.macro inc32 loc
+    clc
+    lda :loc
+    adc #1
+    sta :loc
+    .rept 3
+    lda :loc+1+#
+    adc #0
+    sta :loc+1+#
+    .endr
+.endm
+
+.macro mov32 src dst
+    .rept 4
+    lda :src+#
+    sta :dst+#
+    .endr
+.endm
+
+.macro lsr32 loc times
+    .rept :times
+    lsr :loc+3
+    ror :loc+2
+    ror :loc+1
+    ror :loc
+    .endr
+.endm
+
+.macro asl32 loc times
+    .rept :times
+    asl :loc
+    rol :loc+1
+    rol :loc+2
+    rol :loc+3
+    .endr
+.endm
+
 ; -----------------------------------------------------------------------------
 ; ***** 64-BIT MATH *****
 ; -----------------------------------------------------------------------------

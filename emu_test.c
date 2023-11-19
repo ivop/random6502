@@ -24,7 +24,7 @@ static char *algorithms[] = {
     "chacha20(20)",
     "jsf32",
     "arbee",
-    "arbee8"
+    "sfc32"
 };
 
 static const int nalgorithms = sizeof(algorithms)/sizeof(char*);
@@ -192,9 +192,9 @@ int main(int argc, char **argv) {
         break;
         }
     case 8: {
-        uint32_t seed = 0xdeadbeef;
-        if (big_endian) swap_endian(&seed, 4, 1);
-        memcpy(memory+SEED_LOCATION, &seed, 4);
+        uint32_t seed[] = { 0xdeadbeef, 0xb01dface, 0xc0ffee13 };
+        if (big_endian) swap_endian(&seed, 4, 3);
+        memcpy(memory+SEED_LOCATION, &seed, 4*3);
         cpu.a = SEED_LOCATION & 0xff;
         cpu.x = SEED_LOCATION >> 8;
         break;

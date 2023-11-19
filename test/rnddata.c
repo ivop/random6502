@@ -303,7 +303,8 @@ static void random_sfc32_seed(struct random_sfc32_ctx *ctx, uint32_t *seed) {
     ctx->c = seed[2];
     ctx->counter = 1;
     ctx->pos = -1;
-    for (int i=0; i<15; i++) random_sfc32_core(ctx);
+    for (int i=0; i<15; i++)
+        random_sfc32_core(ctx);
 };
 
 /* ---------------------------------------------------------------------- */
