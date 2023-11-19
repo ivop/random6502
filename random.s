@@ -215,40 +215,59 @@ calculate_new
     adw tmp sfc16_counter tmp
     inw sfc16_counter
 
-    ; a = b ^ (b >> RSHIFT)
-    mwa xb xb_rshift
-    .rept 5
-    lsr xb_rshift+1
-    ror xb_rshift
-    .endr
-
-    lda xb
-    eor xb_rshift
-    sta xa
+    ; a = b ^ (b >> 5)
     lda xb+1
-    eor xb_rshift+1
+    lsr
+    sta xb_rshift+1
+    lda xb
+    ror
+    .rept 4
+    lsr xb_rshift+1
+    ror
+    .endr
+    eor xb
+    sta xa
+    lda xb_rshift+1
+    eor xb+1
     sta xa+1
 
-    ; b = c + (c << LSHIFT)
-    mwa xc xc_lshift
+    ; b = c + (c << 3)
+    lda xc
+    sta xc_lshift
+    lda xc+1
+
     .rept 3
     asl xc_lshift
-    rol xc_lshift+1
+    rol
     .endr
 
-    adw xc xc_lshift xb
+    sta xc_lshift+1
 
-    ; c = ((c << BARREL_SHIFT) | (c >> (16 - BARREL_SHIFT))) + tmp
-    ; equals
-    ; c = rol16(c,BARREL_SHIFT) + tmp
-
-    .rept 6
-    asl xc
-    rol xc+1
     lda xc
-    adc #0
-    sta xc
+    clc
+    adc xc_lshift
+    sta xb
+    lda xc+1
+    adc xc_lshift+1
+    sta xb+1
+
+    ; c = ((c << 6) | (c >> (10))) + tmp
+    ; equals
+    ; c = ror16(c,10) + tmp         ;; 10 = 8 (byte swap) + 2
+
+    lda xc
+    ldx xc+1
+    stx xc
+
+    .rept 2,#
+    lsr
+    ror xc
+    bcc skip:1
+    ora #$80
+skip:1
     .endr
+
+    sta xc+1
 
     adw xc tmp xc
 

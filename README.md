@@ -53,10 +53,10 @@ See the generic emulation based test code that makes use of that.
         <tr align="right">
             <td>sfc16</td>
             <td>16</td>
-            <td><b>226</b></td>
+            <td><b>180</b></td>
             <td>12</td>
-            <td>3292</td>
-            <td>27</td><td>350</td><td>186</td>
+            <td>2432</td>
+            <td>27</td><td>243</td><td>132</td>
             <td align="left">⭐⭐</td>
             <td align="left">smallest</td>
         </tr>
