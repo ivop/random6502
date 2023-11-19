@@ -72,6 +72,8 @@ table
 .define RANDOM_ENABLE_ARBEE
 .define RANDOM_ENABLE_SFC32
 
+;.define RANDOM_ENABLE_ARBEE_ENTROPY_POOLING
+
 RANDOM_ZERO_PAGE=0
 
     icl 'random.s'

@@ -591,6 +591,46 @@ mixcnt
     rts
 .endp
 
+.ifdef RANDOM_ENABLE_ARBEE_ENTROPY_POOLING
+
+// AX points to uint64_t
+
+.proc random_arbee_add_entropy
+    stx entloc+1
+    sta entloc
+
+; save value and set d ^= value;
+    ldx #7
+@
+    lda entloc: $1234,x
+    sta value,x
+    eor d64,x
+    sta d64,x
+    dex
+    bpl @-
+
+    mva #0 skip
+
+looponce
+    add64 b64 value b64
+
+    lda skip: #0
+    bne done
+
+:4  jsr random_arbee_core
+
+    inc skip
+    jmp looponce
+
+done
+    rts
+
+value
+    .dword 0, 0
+.endp
+
+.endif
+
 .print 'arbee: ', RANDOM_START_ARBEE, '-', *-1, ' (', *-RANDOM_START_ARBEE, ')'
 
 .endif
