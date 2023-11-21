@@ -16,7 +16,8 @@ static char *algorithms[] = {
     "chacha20(20)",
     "jsf32",
     "arbee",
-    "sfc32"
+    "sfc32",
+    "sha2"
 };
 
 static const int nalgorithms = sizeof(algorithms)/sizeof(char*);
@@ -309,6 +310,133 @@ static void random_sfc32_seed(struct random_sfc32_ctx *ctx, uint32_t *seed) {
 
 /* ---------------------------------------------------------------------- */
 
+// based on the SHA-256 algorithm
+// https://en.wikipedia.org/wiki/SHA-2
+// after each chunk, the hash is returned as random number
+// when we run out of bytes, the current chunk is xor-ed with the hash
+// at an increasing looping offset (0..8*wordsize) and handled as a new chunk
+// roughly based on PractRands SHA2_pooling, except for the sliding input
+// buffer. there is never a last chunk so all the message padding of SHA-2
+// is ignored. note that if these functions are used for a proper SHA-2 digest
+// you need to take care of the endianess of your input buffer and that of
+// ctx->chunk.
+
+#if 1
+
+#define SHA_WORD uint32_t
+#define RORW(v, r) ( ((v) << (32-(r))) | ((v) >> (r)) )
+
+static SHA_WORD initial_hash[8] = {
+    0x6a09e667, 0xbb67ae85, 0x3c6ef372, 0xa54ff53a,
+    0x510e527f, 0x9b05688c, 0x1f83d9ab, 0x5be0cd19
+};
+
+static SHA_WORD k[64] = {
+    0x428a2f98, 0x71374491, 0xb5c0fbcf, 0xe9b5dba5, 0x3956c25b, 0x59f111f1, 0x923f82a4, 0xab1c5ed5,
+   0xd807aa98, 0x12835b01, 0x243185be, 0x550c7dc3, 0x72be5d74, 0x80deb1fe, 0x9bdc06a7, 0xc19bf174,
+   0xe49b69c1, 0xefbe4786, 0x0fc19dc6, 0x240ca1cc, 0x2de92c6f, 0x4a7484aa, 0x5cb0a9dc, 0x76f988da,
+   0x983e5152, 0xa831c66d, 0xb00327c8, 0xbf597fc7, 0xc6e00bf3, 0xd5a79147, 0x06ca6351, 0x14292967,
+   0x27b70a85, 0x2e1b2138, 0x4d2c6dfc, 0x53380d13, 0x650a7354, 0x766a0abb, 0x81c2c92e, 0x92722c85,
+   0xa2bfe8a1, 0xa81a664b, 0xc24b8b70, 0xc76c51a3, 0xd192e819, 0xd6990624, 0xf40e3585, 0x106aa070,
+   0x19a4c116, 0x1e376c08, 0x2748774c, 0x34b0bcb5, 0x391c0cb3, 0x4ed8aa4a, 0x5b9cca4f, 0x682e6ff3,
+   0x748f82ee, 0x78a5636f, 0x84c87814, 0x8cc70208, 0x90befffa, 0xa4506ceb, 0xbef9a3f7, 0xc67178f2
+};
+
+#else   /* SHA-512 */
+#endif
+
+struct random_sha2_ctx {
+    SHA_WORD h[8];
+    SHA_WORD chunk[16];
+    unsigned int phase;
+    int pos;
+};
+
+static SHA_WORD w[64];
+
+static void random_sha2_handle_chunk(struct random_sha2_ctx *ctx) {
+    memcpy(w, ctx->chunk, 16*sizeof(SHA_WORD));
+
+    for (int i=16; i<64; i++) {
+        SHA_WORD s0 = RORW(w[i-15], 7) ^ RORW(w[i-15],18) ^ RORW(w[i-15], 3);
+        SHA_WORD s1 = RORW(w[i- 2],17) ^ RORW(w[i- 2],19) ^ RORW(w[i- 2],10);
+        w[i] = w[i-16] + s0 + w[i-7] + s1;
+    }
+
+    SHA_WORD a = ctx->h[0];
+    SHA_WORD b = ctx->h[1];
+    SHA_WORD c = ctx->h[2];
+    SHA_WORD d = ctx->h[3];
+    SHA_WORD e = ctx->h[4];
+    SHA_WORD f = ctx->h[5];
+    SHA_WORD g = ctx->h[6];
+    SHA_WORD h = ctx->h[7];
+
+    for (int i=0; i<64; i++) {
+        SHA_WORD S1 = RORW(e,6) ^ RORW(e,11) ^ RORW(e,25);
+        SHA_WORD ch = (e & f) ^ ((~e) & g);
+        SHA_WORD temp1 = h + S1 + ch + k[i] + w[i];
+        SHA_WORD S0 = RORW(a,2) ^ RORW(a,13) ^ RORW(a,22);
+        SHA_WORD maj = (a & b) ^ (a & c) ^ (b & c);
+        SHA_WORD temp2 = S0 + maj;
+
+        h = g;
+        g = f;
+        f = e;
+        e = d + temp1;
+        d = c;
+        c = b;
+        b = a;
+        a = temp1 + temp2;
+    }
+
+    ctx->h[0] += a;
+    ctx->h[1] += b;
+    ctx->h[2] += c;
+    ctx->h[3] += d;
+    ctx->h[4] += e;
+    ctx->h[5] += f;
+    ctx->h[6] += g;
+    ctx->h[7] += h;
+}
+
+static void random_sha2_core(struct random_sha2_ctx *ctx) {
+    uint8_t *p = (uint8_t *) ctx->chunk;
+    uint8_t *q = (uint8_t *) ctx->h;
+
+    p += ctx->phase;
+
+    for (unsigned int i = 0; i<8*sizeof(SHA_WORD); i++)
+        *(p+i) ^= *(q+i);
+
+    ctx->phase++;
+    if (ctx->phase > 8*sizeof(SHA_WORD)) ctx->phase = 0;
+
+    random_sha2_handle_chunk(ctx);
+}
+
+static uint8_t random_sha2(struct random_sha2_ctx *ctx) {
+    if (ctx->pos < 0) {
+        random_sha2_core(ctx);
+        ctx->pos = 8*sizeof(SHA_WORD)-1;
+    }
+
+    int s = ctx->pos;
+    ctx->pos--;
+    uint8_t *p = (uint8_t *) ctx->h;
+    return *(p+s);
+}
+
+static void random_sha2_seed(struct random_sha2_ctx *ctx, uint32_t seed) {
+    memcpy(ctx->h, initial_hash, 8*sizeof(uint32_t));
+    memset(ctx->chunk, 0, 16*sizeof(uint32_t));
+    ctx->chunk[0] = seed;
+    ctx->phase = 0;
+    ctx->pos = -1;
+}
+
+/* ---------------------------------------------------------------------- */
+
 static void usage(char *name) {
     fprintf(stderr,
             "%s: usage: %s algorithm length > filename\n"
@@ -427,6 +555,12 @@ int main(int argc, char **argv) {
         uint32_t seed[] = { 0xdeadbeef, 0xb01dface, 0xc0ffee13 };
         random_sfc32_seed(ctx, seed);
         fnc = (uint8_t (*)(void *ctx)) &random_sfc32;
+        break;
+        }
+    case 9: {
+        ctx = calloc(1, sizeof(struct random_sha2_ctx));
+        random_sha2_seed(ctx, 0);
+        fnc = (uint8_t (*)(void *ctx)) &random_sha2;
         break;
         }
     default:
