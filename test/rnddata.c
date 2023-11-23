@@ -17,7 +17,11 @@ static char *algorithms[] = {
     "jsf32",
     "arbee",
     "sfc32",
-    "sha2"
+#ifndef ENABLE_SHA512
+    "sha-256"
+#else
+    "sha-512"
+#endif
 };
 
 static const int nalgorithms = sizeof(algorithms)/sizeof(char*);
@@ -321,7 +325,7 @@ static void random_sfc32_seed(struct random_sfc32_ctx *ctx, uint32_t *seed) {
 // you need to take care of the endianess of your input buffer and that of
 // ctx->chunk.
 
-#if 0
+#ifndef ENABLE_SHA512
 
 // SHA-256
 
@@ -351,7 +355,7 @@ static SHA_WORD k[64] = {
 // SHA-512
 
 #define SHA_WORD uint64_t
-#define RORW(v, r) ( ((v) << (32-(r))) | ((v) >> (r)) )
+#define RORW(v, r) ( ((v) << (64-(r))) | ((v) >> (r)) )
 
 #define KWSIZE 80
 
@@ -394,8 +398,13 @@ static void random_sha2_handle_chunk(struct random_sha2_ctx *ctx) {
     memcpy(w, ctx->chunk, 16*sizeof(SHA_WORD));
 
     for (int i=16; i<KWSIZE; i++) {
+#ifndef ENABLE_SHA512
         SHA_WORD s0 = RORW(w[i-15], 7) ^ RORW(w[i-15],18) ^ RORW(w[i-15], 3);
         SHA_WORD s1 = RORW(w[i- 2],17) ^ RORW(w[i- 2],19) ^ RORW(w[i- 2],10);
+#else
+        SHA_WORD s0 = RORW(w[i-15], 1) ^ RORW(w[i-15], 8) ^ RORW(w[i-15], 7);
+        SHA_WORD s1 = RORW(w[i- 2],19) ^ RORW(w[i- 2],61) ^ RORW(w[i- 2], 6);
+#endif
         w[i] = w[i-16] + s0 + w[i-7] + s1;
     }
 
@@ -409,10 +418,18 @@ static void random_sha2_handle_chunk(struct random_sha2_ctx *ctx) {
     SHA_WORD h = ctx->h[7];
 
     for (int i=0; i<KWSIZE; i++) {
+#ifndef ENABLE_SHA512
         SHA_WORD S1 = RORW(e,6) ^ RORW(e,11) ^ RORW(e,25);
+#else
+        SHA_WORD S1 = RORW(e,14) ^ RORW(e,18) ^ RORW(e,41);
+#endif
         SHA_WORD ch = (e & f) ^ ((~e) & g);
         SHA_WORD temp1 = h + S1 + ch + k[i] + w[i];
+#ifndef ENABLE_SHA512
         SHA_WORD S0 = RORW(a,2) ^ RORW(a,13) ^ RORW(a,22);
+#else
+        SHA_WORD S0 = RORW(a,28) ^ RORW(a,34) ^ RORW(a,39);
+#endif
         SHA_WORD maj = (a & b) ^ (a & c) ^ (b & c);
         SHA_WORD temp2 = S0 + maj;
 
